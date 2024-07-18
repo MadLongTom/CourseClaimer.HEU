@@ -1,9 +1,12 @@
 ﻿@page "/table"
+@using CourseClaimer.HEU.Services
 @using CourseClaimer.HEU.Shared.Models.Database
-@using CourseClaimer.HEU.Shared.Services
+@using CourseClaimer.HEU.Shared.Models.JWXK
+@using Row = CourseClaimer.HEU.Shared.Models.JWXK.Row
 @inject EntityManagementService EMS
-
-<Table TItem="Customer" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"
+<Button Text="启动所有" IsAsync="true" OnClick="@OnStartClick"></Button>
+<Button Text="停止所有" IsAsync="true" OnClick="@OnStopClick"></Button>
+<Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"
        IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
        ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true"
        AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync" OnDeleteAsync="OnDeleteAsync">
@@ -11,20 +14,34 @@
 
 @code
 {
+    public Table<Customer> table { get; set; }
+    public async Task OnStartClick()
+    {
+        await EMS.WebStartAsync();
+        await table.QueryAsync();
+        StateHasChanged();
+    }
+    public async Task OnStopClick()
+    {
+        await EMS.StopAsync();
+        await table.QueryAsync();
+        StateHasChanged();
+    }
+
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)
     {
         var customers = await EMS.QueryUser(options.PageIndex, options.PageItems);
         return new QueryData<Customer>
-        {
-            Items = customers.Data,
-            TotalCount = customers.Total
-        };
+            {
+                Items = customers.Data,
+                TotalCount = customers.Total
+            };
     }
-    public async Task<bool> OnSaveAsync(Customer customer,ItemChangedType type)
+    public async Task<bool> OnSaveAsync(Customer customer, ItemChangedType type)
     {
-        if(type == ItemChangedType.Update)
+        if (type == ItemChangedType.Update)
         {
-            await EMS.EditCustomer(customer.UserName,customer.Password,customer.Categories,customer.Course,customer.IsFinished);
+            await EMS.EditCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
             return true;
         }
         else if (type == ItemChangedType.Add)

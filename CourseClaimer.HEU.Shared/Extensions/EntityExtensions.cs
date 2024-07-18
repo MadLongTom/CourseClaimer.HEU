@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using CourseClaimer.HEU.Shared.Models.JWXK;
+using CourseClaimer.HEU.Shared.Models.Runtime;
 
 namespace CourseClaimer.HEU.Shared.Extensions
 {
     public static class EntityExtensions
     {
-        private const int LimitMillSeconds = 250;
+        private const int LimitListMillSeconds = 400;
+        private const int LimitAddMillSeconds = 250;
 
         public static HttpRequestMessage BuildPostRequest(string url, Entity entity, MediaTypeHeaderValue? contentType, HttpContent content)
         {
@@ -29,9 +32,9 @@ namespace CourseClaimer.HEU.Shared.Extensions
                 //NetworkDelayCounter += 1;
             }
         }
-        public static async Task<HttpResponseMessage> LimitSendAsync(this HttpClient client, HttpRequestMessage hrm, Entity entity)
+        public static async Task<HttpResponseMessage> LimitSendAsync(this HttpClient client, HttpRequestMessage hrm, Entity entity,bool IsAdd = false)
         {
-            await DelayTillLimit(entity.stopwatch, LimitMillSeconds);
+            await DelayTillLimit(entity.stopwatch, IsAdd ? LimitAddMillSeconds : LimitListMillSeconds);
             entity.stopwatch.Restart();
             var res = await client.SendAsync(hrm);
             //Program.NetworkSendCounter += 1;
@@ -73,6 +76,10 @@ namespace CourseClaimer.HEU.Shared.Extensions
 
         public static async Task<HttpResponseMessage> GetRowList(this Entity entity)
         {
+            while (entity.IsAddPending)
+            {
+                await Task.Delay(LimitListMillSeconds);
+            }
             var content = JsonContent.Create(listData);
             content.Headers.ContentType = new("application/json")
             {
@@ -96,7 +103,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
                 //{ "chooseVolunteer", "1" }  //正选不传
             };
             HttpRequestMessage hrt = BuildPostRequest(addUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(addData));
-            var addResponse = await entity.client.LimitSendAsync(hrt, entity);
+            var addResponse = await entity.client.LimitSendAsync(hrt, entity,true);
             return addResponse;
         }
 
@@ -109,7 +116,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
         public static async Task<HttpResponseMessage> ValidateClaim(this Entity entity, Row @class)
         {
             HttpRequestMessage hrt = BuildPostRequest(selectUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(selectData));
-            var selectResponse = await entity.client.LimitSendAsync(hrt, entity);
+            var selectResponse = await entity.client.LimitSendAsync(hrt, entity,true);
             return selectResponse;
         }
 

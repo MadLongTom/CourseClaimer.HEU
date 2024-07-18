@@ -2,9 +2,10 @@
 using CourseClaimer.HEU.Components;
 using Microsoft.AspNetCore.SignalR;
 using System.Text;
-using CourseClaimer.HEU.Shared.Services;
+using CourseClaimer.HEU.Services;
 using CourseClaimer.Ocr;
 using Microsoft.EntityFrameworkCore;
+using Savorboard.CAP.InMemoryMessageQueue;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,18 @@ builder.Services.AddBootstrapBlazor();
 // 增加 SignalR 服务数据传输大小限制配置
 builder.Services.Configure<HubOptions>(option => option.MaximumReceiveMessageSize = null);
 
+builder.Services.AddCap(x =>
+{ 
+    x.UseInMemoryStorage();
+    //x.UseSqlite(cfg => cfg.ConnectionString = "Data Source=CAPDB.db");
+    x.UseInMemoryMessageQueue(); 
+    x.UseDashboard(d =>
+    {
+        d.AllowAnonymousExplicit = true;
+    });
+    x.CollectorCleaningInterval = 5;
+});
+
 builder.Services.AddHttpClient("JWXK",client =>
 {
     client.DefaultRequestHeaders.Accept.Clear();
@@ -29,17 +42,21 @@ builder.Services.AddHttpClient("JWXK",client =>
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0");
     client.DefaultRequestHeaders.Connection.Add("keep-alive");
 });
+
 builder.Services.AddSingleton<Aes>(inst =>
 {
     var util = Aes.Create();
     util.Key = "MWMqg2tPcDkxcm11"u8.ToArray();
     return util;
 });
-builder.Services.AddDbContext<ClaimDbContext>(ServiceLifetime.Transient);
-builder.Services.AddScoped<OcrService>();
-builder.Services.AddScoped<AuthorizeService>();
-builder.Services.AddTransient<ClaimService>();
-builder.Services.AddScoped<EntityManagementService>();
+
+builder.Services.AddDbContext<ClaimDbContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+builder.Services.AddSingleton<OcrService>();
+builder.Services.AddSingleton<AuthorizeService>();
+builder.Services.AddSingleton<ClaimService>();
+builder.Services.AddSingleton<EntityManagementService>();
+builder.Services.AddHostedService<EntityManagementService>();
+builder.Services.AddSingleton<CapClaimService>();
 
 var app = builder.Build();
 
@@ -51,7 +68,7 @@ if (!app.Environment.IsDevelopment())
 
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ClaimDbContext>().Database.Migrate();
 
-_ = app.Services.CreateScope().ServiceProvider.GetRequiredService<EntityManagementService>().StartAsync(CancellationToken.None);
+//_ = app.Services.CreateScope().ServiceProvider.GetRequiredService<EntityManagementService>().StartAsync(CancellationToken.None);
 
 app.UseStaticFiles();
 

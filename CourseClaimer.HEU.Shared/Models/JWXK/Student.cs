@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 #pragma warning disable CS8618
+namespace CourseClaimer.HEU.Shared.Models.JWXK;
+
 public class Student
 {
     public Dictionary<string, Batch> hrbeuLcMap { get; set; }

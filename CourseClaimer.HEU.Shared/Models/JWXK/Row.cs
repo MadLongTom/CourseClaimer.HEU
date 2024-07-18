@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 #pragma warning disable CS8618
+namespace CourseClaimer.HEU.Shared.Models.JWXK;
+
 public record Row
 {
     public string KCH { get; set; }

@@ -23,6 +23,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
             {
                 response.Data = await message.Content.ReadFromJsonAsync<T>();
                 response.InnerCode = (HttpStatusCode)(response.Data?.code ?? 400);
+                response.IsSuccess = response.InnerCode == HttpStatusCode.OK;
                 response.InnerMessage = response.Data?.msg ?? "";
             }
             else

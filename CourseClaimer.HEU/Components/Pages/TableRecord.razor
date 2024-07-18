@@ -1,6 +1,6 @@
 ﻿@page "/tableRecord"
+@using CourseClaimer.HEU.Services
 @using CourseClaimer.HEU.Shared.Models.Database
-@using CourseClaimer.HEU.Shared.Services
 @inject EntityManagementService EMS
 
 <Table TItem="ClaimRecord" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"

@@ -1,0 +1,24 @@
+﻿@page "/tableRow"
+@using CourseClaimer.HEU.Services
+@using CourseClaimer.HEU.Shared.Dto
+@using CourseClaimer.HEU.Shared.Models.Database
+@inject EntityManagementService EMS
+
+<Table TItem="RowDto" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"
+       IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
+       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true"
+       AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync">
+</Table>
+
+@code
+{
+    public async Task<QueryData<RowDto>> OnQueryAsync(QueryPageOptions options)
+    {
+        var customers = await EMS.QueryRow(options.PageIndex, options.PageItems);
+        return new QueryData<RowDto>
+        {
+            Items = customers.Data,
+            TotalCount = customers.Total
+        };
+    }
+}
