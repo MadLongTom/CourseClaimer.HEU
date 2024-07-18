@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV OPENCV_VERSION=4.7.0
+ENV OPENCV_VERSION=4.10.0
 
 WORKDIR /
 
