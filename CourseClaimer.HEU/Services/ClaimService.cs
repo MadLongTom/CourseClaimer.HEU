@@ -10,7 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseClaimer.HEU.Services
 {
-    public class ClaimService(ILogger<ClaimService> logger, AuthorizeService authorizeService, ClaimDbContext dbContext, ICapPublisher capBus)
+    public class ClaimService(
+        ILogger<ClaimService> logger,
+        AuthorizeService authorizeService,
+        ClaimDbContext dbContext,
+        ICapPublisher capBus)
     {
         public async Task MakeUserFinished(Entity entity)
         {
@@ -92,39 +96,7 @@ namespace CourseClaimer.HEU.Services
             }
             return ValidateResult.UnknownError;
         }
-        /*
-        public async Task QueryClaim(Entity entity,CancellationToken cancellationToken = default)
-        {
-            while (true)
-            {
-                if (entity.finished || cancellationToken.IsCancellationRequested) return;
-                List<Row> publicList = await GetAvailableList(entity);
-                List<Row> privateList = GetPrivateList(publicList, entity);
-                privateList = privateList.Where(p => p.classCapacity > p.numberOfSelected).ToList();
-                if (privateList.Count <= 0) continue;
-                foreach (Row @class in privateList)
-                {
-                    if(cancellationToken.IsCancellationRequested) return;
-                    await Claim(entity, @class);
-                }
-            }
-        }
-        public async Task DirectClaim(Entity entity, CancellationToken cancellationToken = default)
-        {
-            List<Row> publicList = await GetAllList(entity);
-            List<Row> privateList = GetPrivateList(publicList, entity);
-            while (true)
-            {
-                privateList.RemoveAll(q => entity.done.Any(p => p.KCH == q.KCH));
-                if (privateList.Count == 0) return;
-                foreach (Row @class in privateList)
-                {
-                    if (entity.finished || cancellationToken.IsCancellationRequested) return;
-                    await Claim(entity, @class);
-                }
-            }
-        }
-        */
+
         public async Task Claim(Entity entity, Row @class)
         {
             entity.IsAddPending = true;
@@ -134,16 +106,15 @@ namespace CourseClaimer.HEU.Services
                 switch (res)
                 {
                     case AddResult.Success:
-                        var validate = await ValidateClaim(entity, @class);
-
+                        ValidateResult validate;
+                        do validate = await ValidateClaim(entity, @class);
+                        while(validate == ValidateResult.UnknownError);
                         await LogClaimRecord(entity, @class, validate == ValidateResult.Success);
                         entity.IsAddPending = false;
                         if (validate != ValidateResult.Success) return;
                         entity.done.Add(@class);
                         if (entity.done.Count < 5) return;
-
                         await MakeUserFinished(entity);
-
                         entity.finished = true;
                         return;
                     case AddResult.OverSpeed:
@@ -151,9 +122,7 @@ namespace CourseClaimer.HEU.Services
                     case AddResult.Full:
                         entity.IsAddPending = false;
                         entity.finished = true;
-
                         await MakeUserFinished(entity);
-
                         return;
                     case AddResult.Failed:
                         entity.IsAddPending = false;
@@ -166,14 +135,9 @@ namespace CourseClaimer.HEU.Services
                     case AddResult.AuthorizationExpired:
                         entity.IsAddPending = true;
                         LoginResult loginResult;
-                        do
-                        {
-                            loginResult = await authorizeService.MakeUserLogin(entity);
-                        } while (loginResult == LoginResult.WrongCaptcha);
-                        if (loginResult == LoginResult.WrongPassword)
-                        {
-                            entity.finished = true;
-                        }
+                        do loginResult = await authorizeService.MakeUserLogin(entity);
+                        while (loginResult == LoginResult.WrongCaptcha);
+                        if (loginResult == LoginResult.WrongPassword) entity.finished = true;
                         entity.IsAddPending = false;
                         return;
                     case AddResult.UnknownError:
@@ -183,9 +147,5 @@ namespace CourseClaimer.HEU.Services
                 break;
             }
         }
-
-        static readonly Dictionary<string, int> xgxklb = new()
-            { { "A", 12 }, { "B", 13 }, { "C", 14 }, { "D", 15 }, { "E", 16 }, { "F", 17 }, { "A0", 18 } };
-
     }
 }

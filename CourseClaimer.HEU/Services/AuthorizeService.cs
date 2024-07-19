@@ -36,6 +36,7 @@ namespace CourseClaimer.HEU.Services
                     return LoginResult.UnknownError;
             }
         }
+
         private string AESEncrypt(string text)
         {
             var cipher = aesUtil.EncryptEcb(Encoding.UTF8.GetBytes(text), PaddingMode.PKCS7);

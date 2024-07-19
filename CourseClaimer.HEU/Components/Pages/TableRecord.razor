@@ -3,10 +3,13 @@
 @using CourseClaimer.HEU.Shared.Models.Database
 @inject EntityManagementService EMS
 
-<Table TItem="ClaimRecord" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"
-       IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
-       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true"
+<Table TItem="ClaimRecord" IsPagination="true" PageItemsSource="[20,40,100]" class="table-demo"
+       IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="false"
+       ShowToolbar="false" ShowSearch="false" ShowExtendButtons="false"
        AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Id" Ignore="true" />
+    </TableColumns>
 </Table>
 
 @code

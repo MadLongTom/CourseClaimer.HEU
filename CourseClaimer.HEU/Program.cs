@@ -6,6 +6,7 @@ using CourseClaimer.HEU.Services;
 using CourseClaimer.Ocr;
 using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
+using CourseClaimer.HEU.Shared.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,16 +32,25 @@ builder.Services.AddCap(x =>
     x.CollectorCleaningInterval = 5;
 });
 
-builder.Services.AddHttpClient("JWXK",client =>
+builder.Services.AddHttpClient("JWXK", client =>
 {
+    client.BaseAddress = new(builder.Configuration["BasePath"]);
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(new("application/json"));
     client.DefaultRequestHeaders.Accept.Add(new("text/plain"));
     client.DefaultRequestHeaders.Accept.Add(new("*/*"));
     client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate");
     client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6");
-    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0");
     client.DefaultRequestHeaders.Connection.Add("keep-alive");
+}).AddHttpMessageHandler<MapForwarderHandler>()
+  .AddStandardResilienceHandler(options =>
+{
+    options.Retry.MaxRetryAttempts = 3;
+    options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(30); // 总的超时时间
+    options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(5); //每次重试的超时时间
+    options.CircuitBreaker.BreakDuration = TimeSpan.FromSeconds(30); //熔断时间
 });
 
 builder.Services.AddSingleton<Aes>(inst =>
@@ -50,13 +60,14 @@ builder.Services.AddSingleton<Aes>(inst =>
     return util;
 });
 
+builder.Services.AddTransient<MapForwarderHandler>();
 builder.Services.AddDbContext<ClaimDbContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
 builder.Services.AddSingleton<OcrService>();
 builder.Services.AddSingleton<AuthorizeService>();
 builder.Services.AddSingleton<ClaimService>();
 builder.Services.AddSingleton<EntityManagementService>();
-builder.Services.AddHostedService<EntityManagementService>();
 builder.Services.AddSingleton<CapClaimService>();
+builder.Services.AddHostedService<EntityManagementService>();
 
 var app = builder.Build();
 
@@ -67,8 +78,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ClaimDbContext>().Database.Migrate();
-
-//_ = app.Services.CreateScope().ServiceProvider.GetRequiredService<EntityManagementService>().StartAsync(CancellationToken.None);
 
 app.UseStaticFiles();
 

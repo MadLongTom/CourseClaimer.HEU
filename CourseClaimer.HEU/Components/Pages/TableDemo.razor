@@ -1,17 +1,18 @@
 ﻿@page "/table"
 @using CourseClaimer.HEU.Services
 @using CourseClaimer.HEU.Shared.Models.Database
-@using CourseClaimer.HEU.Shared.Models.JWXK
-@using Row = CourseClaimer.HEU.Shared.Models.JWXK.Row
 @inject EntityManagementService EMS
 <Button Text="启动所有" IsAsync="true" OnClick="@OnStartClick"></Button>
 <Button Text="停止所有" IsAsync="true" OnClick="@OnStopClick"></Button>
-<Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[10,20,40]" class="table-demo"
+<Divider/>
+<Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[20, 40, 100]" class="table-demo"
        IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
-       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true"
+       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true" IsExtendButtonsInRowHeader="true"
        AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync" OnDeleteAsync="OnDeleteAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Id" Ignore="true" />
+    </TableColumns>
 </Table>
-
 @code
 {
     public Table<Customer> table { get; set; }
@@ -19,13 +20,11 @@
     {
         await EMS.WebStartAsync();
         await table.QueryAsync();
-        StateHasChanged();
     }
     public async Task OnStopClick()
     {
         await EMS.StopAsync();
         await table.QueryAsync();
-        StateHasChanged();
     }
 
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)
@@ -39,24 +38,20 @@
     }
     public async Task<bool> OnSaveAsync(Customer customer, ItemChangedType type)
     {
-        if (type == ItemChangedType.Update)
+        switch (type)
         {
-            await EMS.EditCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
-            return true;
+            case ItemChangedType.Update:
+                await EMS.EditCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
+                break;
+            case ItemChangedType.Add:
+                await EMS.AddCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
+                break;
         }
-        else if (type == ItemChangedType.Add)
-        {
-            await EMS.AddCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
-            return true;
-        }
-        return false;
+        return true;
     }
     public async Task<bool> OnDeleteAsync(IEnumerable<Customer> customers)
     {
-        foreach (var customer in customers)
-        {
-            await EMS.DeleteCustomer(customer.UserName);
-        }
+        foreach (var customer in customers) await EMS.DeleteCustomer(customer.UserName);
         return true;
     }
 }

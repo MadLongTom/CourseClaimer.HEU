@@ -8,9 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseClaimer.HEU.Services
 {
-    public class EntityManagementService(AuthorizeService authorizeService, CapClaimService capClaimService, ILogger<EntityManagementService> logger,ClaimDbContext dbContext,IServiceProvider serviceProvider) :IHostedService
+    public class EntityManagementService(
+        AuthorizeService authorizeService,
+        CapClaimService capClaimService,
+        ILogger<EntityManagementService> logger,
+        ClaimDbContext dbContext) : IHostedService
     {
         public List<WorkInfo> WorkInfos { get; set; } = [];
+
         public async Task AddCustomer(string userName, string password, string categories, string course, bool isFinished)
         {
             var customer = new Customer
@@ -26,6 +31,7 @@ namespace CourseClaimer.HEU.Services
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
         }
+
         public async Task DeleteCustomer(string userName)
         {
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == userName);
@@ -34,6 +40,7 @@ namespace CourseClaimer.HEU.Services
             dbContext.Customers.Remove(customer);
             await dbContext.SaveChangesAsync();
         }
+
         public async Task <QueryDto<RowDto>> QueryRow(int page, int pageSize)
         {
             return new QueryDto<RowDto>
@@ -42,6 +49,7 @@ namespace CourseClaimer.HEU.Services
                 Data = ProgramExtensions.AllRows.Skip((page - 1) * pageSize).Take(pageSize).ToList()
             };
         }
+
         public async Task<QueryDto<Customer>> QueryUser(int page,int pageSize)
         {
             var query = dbContext.Customers.AsQueryable();
@@ -53,6 +61,7 @@ namespace CourseClaimer.HEU.Services
                 Data = data
             };
         }
+
         public async Task<QueryDto<ClaimRecord>> QueryRecord(int page, int pageSize)
         {
             var query = dbContext.ClaimRecords.AsQueryable();
@@ -64,6 +73,7 @@ namespace CourseClaimer.HEU.Services
                 Data = data
             };
         }
+
         public async Task<QueryDto<EntityRecord>> QueryEntity(int page, int pageSize)
         {
             var query = dbContext.EntityRecords.AsQueryable();
@@ -75,6 +85,7 @@ namespace CourseClaimer.HEU.Services
                 Data = data
             };
         }
+
         public async Task EditCustomer(string userName, string password, string categories, string course, bool isFinished)
         {
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == userName);
@@ -99,7 +110,11 @@ namespace CourseClaimer.HEU.Services
             {
                 if (workinfo == null)
                 {
-                    var entity = new Entity(customer.UserName, customer.Password, customer.Categories == string.Empty ? [] : customer.Categories.Split(',').Select(p => xgxklbs[p]).ToList(), customer.Course == string.Empty ? [] : customer.Course.Split(',').ToList(), [],false,null);
+                    var entity = new Entity(customer.UserName, customer.Password,
+                        customer.Categories == string.Empty
+                            ? []
+                            : customer.Categories.Split(',').Select(p => xgxklbs[p]).ToList(),
+                        customer.Course == string.Empty ? [] : customer.Course.Split(',').ToList(), [], false, null);
                     ProgramExtensions.Entities.Add(entity);
                     var cts = new CancellationTokenSource();
                     LoginResult loginResult;
@@ -141,6 +156,7 @@ namespace CourseClaimer.HEU.Services
                 }
             }
         }
+
         public async Task WebStartAsync(CancellationToken cancellationToken = default)
         {
             var customers = await dbContext.Customers.ToListAsync(cancellationToken);

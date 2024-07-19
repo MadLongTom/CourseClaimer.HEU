@@ -14,8 +14,8 @@ namespace CourseClaimer.HEU.Shared.Extensions
         public static HttpRequestMessage BuildPostRequest(string url, Entity entity, MediaTypeHeaderValue? contentType, HttpContent content)
         {
             HttpRequestMessage hrt = new(HttpMethod.Post, url);
-            hrt.Headers.Referrer = new Uri($"https://jwxk.hrbeu.edu.cn/xsxk/elective/grablessons?batchId={entity.batchId}");
-            hrt.Headers.Host = "jwxk.hrbeu.edu.cn";
+            hrt.Headers.Referrer = new(Path.Combine(entity.client.BaseAddress.AbsoluteUri,$"xsxk/elective/grablessons?batchId={entity.batchId}"));
+            hrt.Headers.Host = entity.client.BaseAddress.Host;
             hrt.Content = content;
             if (contentType != null) hrt.Content.Headers.ContentType = contentType;
             return hrt;
@@ -45,7 +45,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
         {
             var content = new FormUrlEncodedContent([]);
             content.Headers.ContentLength = 0;
-            return await entity.client.PostAsync("https://jwxk.hrbeu.edu.cn/xsxk/auth/captcha", content);
+            return await entity.client.PostAsync("xsxk/auth/captcha", content);
         }
 
         public static async Task<HttpResponseMessage> Login(this Entity entity, string encodedPassword, string uuid, string auth)
@@ -57,15 +57,17 @@ namespace CourseClaimer.HEU.Shared.Extensions
                 {"uuid",uuid }
             });
             content.Headers.ContentType = new("application/x-www-form-urlencoded");
-            var res = entity.client.PostAsync("https://jwxk.hrbeu.edu.cn/xsxk/auth/hrbeu/login", content);
+            var res = entity.client.PostAsync("xsxk/auth/login", content);
             return await res;
         }
 
-        public static readonly string listUrl = "https://jwxk.hrbeu.edu.cn/xsxk/elective/clazz/list";
+        private static readonly Dictionary<string, int> xgxklb = new() //reserved
+            { { "A", 12 }, { "B", 13 }, { "C", 14 }, { "D", 15 }, { "E", 16 }, { "F", 17 }, { "A0", 18 } };
+        public static readonly string listUrl = "xsxk/elective/clazz/list";
         public static readonly Dictionary<string, object> listData = new()
         {
             { "SFCT", "0" },
-            //{ "XGXKLB",xgxklb["F"] }, //global filter
+            //{ "XGXKLB",xgxklb["F"] },
             //{ "KEY","网络" },
             { "campus", "01" },
             { "orderBy", "" },
@@ -85,13 +87,13 @@ namespace CourseClaimer.HEU.Shared.Extensions
             {
                 CharSet = "UTF-8"
             };
-            content.Headers.ContentLength = content.ReadAsStringAsync().Result.Length;
+            //content.Headers.ContentLength = content.ReadAsStringAsync().Result.Length;
             HttpRequestMessage hrt = BuildPostRequest(listUrl, entity, null, content);
             var responsePublicList = await entity.client.LimitSendAsync(hrt, entity);
             return responsePublicList;
         }
 
-        static readonly string addUrl = "https://jwxk.hrbeu.edu.cn/xsxk/elective/clazz/add";
+        static readonly string addUrl = "xsxk/elective/clazz/add";
 
         public static async Task<HttpResponseMessage> Add(this Entity entity, Row @class)
         {
@@ -107,7 +109,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
             return addResponse;
         }
 
-        static readonly string selectUrl = "https://jwxk.hrbeu.edu.cn/xsxk/elective/hrbeu/select";
+        static readonly string selectUrl = "xsxk/elective/hrbeu/select";
         static readonly Dictionary<string, string> selectData = new()
         {
             { "jxblx","YXKCYX_XGKC"}
