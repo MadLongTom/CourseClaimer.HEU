@@ -66,14 +66,15 @@ namespace CourseClaimer.HEU.Shared.Extensions
         public static readonly string listUrl = "xsxk/elective/clazz/list";
         public static readonly Dictionary<string, object> listData = new()
         {
-            { "SFCT", "0" },
+            //{ "SFCT", "0" },
             //{ "XGXKLB",xgxklb["F"] },
             //{ "KEY","网络" },
             { "campus", "01" },
             { "orderBy", "" },
             { "pageNumber",1 },
-            { "pageSize" , 300 },
-            { "teachingClassType" , "XGKC" }
+            { "pageSize" , 450 },
+            //{ "teachingClassType" , "XGKC" }
+            { "teachingClassType" , "TJKC" }
         };
 
         public static async Task<HttpResponseMessage> GetRowList(this Entity entity)
