@@ -11,7 +11,7 @@ namespace CourseClaimer.HEU.Shared.Handlers
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (request.RequestUri.AbsoluteUri == "xsxk/auth/login")
+            if (request.RequestUri.AbsolutePath == "xsxk/auth/login")
             {
                 request.RequestUri = new(configuration["AuthPath"]);
             }
