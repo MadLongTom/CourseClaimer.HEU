@@ -1,12 +1,12 @@
-﻿using System.Security.Cryptography;
+﻿using CourseClaimer.HEU.Services;
+using CourseClaimer.HEU.Shared.Handlers;
 using CourseClaimer.HEU.Components;
-using Microsoft.AspNetCore.SignalR;
-using System.Text;
-using CourseClaimer.HEU.Services;
 using CourseClaimer.Ocr;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
-using CourseClaimer.HEU.Shared.Handlers;
+using System.Security.Cryptography;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +31,24 @@ builder.Services.AddCap(x =>
     });
     x.CollectorCleaningInterval = 5;
 });
+builder.Services.AddDbContext<ClaimDbContext>(optionsBuilder =>
+{
+    switch (builder.Configuration["DBProvider"])
+    {
+        case "SQLServer":
+            optionsBuilder.UseSqlServer(@"Server=.;Database=ClaimerDb;Trusted_Connection=True;TrustServerCertificate=true");
+            break;
+        case "SQLite":
+            optionsBuilder.UseSqlite(@"Data Source=ClaimerDB.db;");
+            break;
+        case "PostgreSQL":
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            optionsBuilder.UseNpgsql(builder.Configuration["PGSQL"]);
+            break;
+        default:
+            throw new("Unknown DBType");
+    }
+}, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
 builder.Services.AddHttpClient("JWXK", client =>
 {
@@ -61,7 +79,6 @@ builder.Services.AddSingleton<Aes>(inst =>
 });
 
 builder.Services.AddTransient<MapForwarderHandler>();
-builder.Services.AddDbContext<ClaimDbContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
 builder.Services.AddSingleton<OcrService>();
 builder.Services.AddSingleton<AuthorizeService>();
 builder.Services.AddSingleton<ClaimService>();

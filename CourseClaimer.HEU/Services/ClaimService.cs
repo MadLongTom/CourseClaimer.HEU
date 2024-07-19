@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
+using CourseClaimer.HEU.Shared.Dto;
 using CourseClaimer.HEU.Shared.Enums;
 using CourseClaimer.HEU.Shared.Extensions;
 using CourseClaimer.HEU.Shared.Models.Database;
@@ -13,11 +15,12 @@ namespace CourseClaimer.HEU.Services
     public class ClaimService(
         ILogger<ClaimService> logger,
         AuthorizeService authorizeService,
-        ClaimDbContext dbContext,
+        IServiceProvider serviceProvider,
         ICapPublisher capBus)
     {
         public async Task MakeUserFinished(Entity entity)
         {
+            var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == entity.username);
             customer.IsFinished = true;
             await dbContext.SaveChangesAsync();
@@ -25,6 +28,7 @@ namespace CourseClaimer.HEU.Services
 
         public async Task LogClaimRecord(Entity entity, Row @class, bool success)
         {
+            var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             dbContext.ClaimRecords.Add(new ClaimRecord()
             {
                 IsSuccess = success,
@@ -39,11 +43,17 @@ namespace CourseClaimer.HEU.Services
             var res = await entity.GetRowList().ToResponseDto<ListRoot>();
             if (!res.IsSuccess) return [];
             var availableRows = res.Data.data.rows.Where(q => q.classCapacity > q.numberOfSelected);
-            if (availableRows.Count() != 0)
-                logger.LogInformation($"AvailableList:{entity.username} found available course {string.Join('|', availableRows.Select(c => c.KCM))}");
+            //if (availableRows.Count() != 0)
+            //    logger.LogInformation($"AvailableList:{entity.username} found available course {string.Join('|', availableRows.Select(c => c.KCM))}");
             foreach (var row in availableRows)
             {
                 await capBus.PublishAsync("ClaimService.RowAvailable", row);
+                var secret = entity.Secrets.Find(s => s.KCH == row.KCH);
+                if (secret.secretVal != row.secretVal)
+                {
+                    secret.secretVal = row.secretVal;
+                    secret.classId = row.JXBID;
+                }
             }
             return availableRows.ToList();
         }
@@ -51,13 +61,19 @@ namespace CourseClaimer.HEU.Services
         public async Task<List<Row>> GetAllList(Entity entity)
         {
             var res = await entity.GetRowList().ToResponseDto<ListRoot>();
-            logger.LogInformation($"AllList:{entity.username} found available course {string.Join('|', res.Data.data.rows.Select(c => c.KCM))}");
+            //logger.LogInformation($"AllList:{entity.username} found available course {string.Join('|', res.Data.data.rows.Select(c => c.KCM))}");
             //find all unadded rows in AllRows
             foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.KCH != r.KCH)))
             {
                 ProgramExtensions.AllRows.Add(new() { KCH = row.KCH, KCM = row.KCM, XGXKLB = row.XGXKLB });
                 await capBus.PublishAsync("ClaimService.RowAdded", row);
             }
+            entity.Secrets.AddRange(res.Data.data.rows.Select(row => new RowSecretDto
+            {
+                KCH = row.KCH,
+                secretVal = row.secretVal,
+                classId = row.JXBID
+            }));
             return res.IsSuccess ? res.Data.data.rows.ToList() : [];
         }
 
@@ -78,6 +94,7 @@ namespace CourseClaimer.HEU.Services
                 res.InnerMessage.Contains("冲突")) return AddResult.Conflict;
             if (res.InnerMessage.Contains("请重新登录")) return AddResult.AuthorizationExpired;
             logger.LogWarning($"Add:{entity.username} when claiming {@class.KCM}, server reported {res.InnerMessage}");
+            var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             dbContext.EntityRecords.Add(new EntityRecord()
             {
                 UserName = entity.username,
@@ -118,6 +135,14 @@ namespace CourseClaimer.HEU.Services
                         entity.finished = true;
                         return;
                     case AddResult.OverSpeed:
+                        var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
+                        logger.LogWarning($"Claim:{entity.username} OverSpeed when claiming {@class.KCM}");
+                        dbContext.EntityRecords.Add(new EntityRecord()
+                        {
+                            UserName = entity.username,
+                            Message = $"Claim:{entity.username} OverSpeed when claiming {@class.KCM}"
+                        });
+                        await dbContext.SaveChangesAsync();
                         continue;
                     case AddResult.Full:
                         entity.IsAddPending = false;
@@ -131,6 +156,7 @@ namespace CourseClaimer.HEU.Services
                         return;
                     case AddResult.Conflict:
                         entity.IsAddPending = false;
+                        entity.SubscribedRows.Remove(@class.KCH);
                         return;
                     case AddResult.AuthorizationExpired:
                         entity.IsAddPending = true;

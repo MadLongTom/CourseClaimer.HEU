@@ -26,19 +26,12 @@ namespace CourseClaimer.HEU.Shared.Extensions
             {
                 await Task.Delay(Convert.ToInt32(requiredMillSeconds - sw.ElapsedMilliseconds));
             }
-            else if (sw.ElapsedMilliseconds > requiredMillSeconds)
-            {
-                //TotalDelayTimeSpan += new TimeSpan(0, 0, 0, 0, Convert.ToInt32(sw.ElapsedMilliseconds - requiredMillSeconds));
-                //NetworkDelayCounter += 1;
-            }
         }
         public static async Task<HttpResponseMessage> LimitSendAsync(this HttpClient client, HttpRequestMessage hrm, Entity entity,bool IsAdd = false)
         {
             await DelayTillLimit(entity.stopwatch, IsAdd ? LimitAddMillSeconds : LimitListMillSeconds);
             entity.stopwatch.Restart();
             var res = await client.SendAsync(hrm);
-            //Program.NetworkSendCounter += 1;
-            //Program.TotalTimeSpan += entity.stopwatch.Elapsed;
             return res;
         }
         public static async Task<HttpResponseMessage> Captcha(this Entity entity)
@@ -73,8 +66,8 @@ namespace CourseClaimer.HEU.Shared.Extensions
             { "orderBy", "" },
             { "pageNumber",1 },
             { "pageSize" , 450 },
-            //{ "teachingClassType" , "XGKC" }
-            { "teachingClassType" , "TJKC" }
+            { "teachingClassType" , "XGKC" }
+            //{ "teachingClassType" , "TJKC" }
         };
 
         public static async Task<HttpResponseMessage> GetRowList(this Entity entity)
@@ -98,11 +91,13 @@ namespace CourseClaimer.HEU.Shared.Extensions
 
         public static async Task<HttpResponseMessage> Add(this Entity entity, Row @class)
         {
+            var secret = entity.Secrets.FirstOrDefault(s => s.KCH == @class.KCH);
+            if (secret == null) throw new Exception("Secret not found");
             var addData = new Dictionary<string, string>
             {
                 { "clazzType", "XGKC" },
-                { "clazzId",@class.JXBID },
-                { "secretVal",@class.secretVal },
+                { "clazzId",secret.classId },
+                { "secretVal",secret.secretVal },
                 //{ "chooseVolunteer", "1" }  //正选不传
             };
             HttpRequestMessage hrt = BuildPostRequest(addUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(addData));

@@ -35,9 +35,9 @@ namespace CourseClaimer.HEU.Shared.Extensions
         }
         public static async Task<ResponseDto<T>> ToResponseDto<T>(this Task<HttpResponseMessage> request) where T : BaseRoot
         {
+            var message = await request;
             try
             {
-                var message = await request;
                 return await message.ToResponseDto<T>();
             }
             catch (Exception ex)
@@ -45,6 +45,7 @@ namespace CourseClaimer.HEU.Shared.Extensions
                 return new ResponseDto<T>
                 {
                     Exception = ex,
+                    RawResponse = await message.Content.ReadAsStringAsync(),
                     IsSuccess = false
                 };
             }
