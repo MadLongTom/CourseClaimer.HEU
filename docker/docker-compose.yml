@@ -1,0 +1,24 @@
+services:
+  HEUjwqk:
+    image: heujwxk
+    container_name: heujwqk
+    volumes:
+      #- /docker/jwqk/CourseClaimer.HEU/ClaimerDB.db:/CourseClaimer.HEU/CourseClaimer.HEU/ClaimerDB.db
+      - /docker/jwqk/appsettings.json:/CourseClaimer.HEU/CourseClaimer.HEU/appsettings.json
+    ports:
+      - 5074:5074
+      - 8080:8080
+      - 8081:8081
+    restart: 'unless-stopped'
+    environment:
+      - connectiondstring='User ID=user@domain.com;Password=SuperSecret;Host=localhost;Port=5075;Database=HEUjwqk;'
+  PGsql:
+    image: dpage/pgadmin4
+    container_name: PGsql
+    ports:
+      - 5075:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+      - SCRIPT_NAME=/pgadmin4
+    restart: 'unless-stopped'
