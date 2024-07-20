@@ -1,4 +1,5 @@
-﻿using CourseClaimer.HEU.Shared.Dto;
+﻿using System.Text.Json;
+using CourseClaimer.HEU.Shared.Dto;
 using CourseClaimer.HEU.Shared.Enums;
 using CourseClaimer.HEU.Shared.Extensions;
 using CourseClaimer.HEU.Shared.Models.Database;
@@ -15,6 +16,23 @@ namespace CourseClaimer.HEU.Services
         ClaimDbContext dbContext) : IHostedService
     {
         public List<WorkInfo> WorkInfos { get; set; } = [];
+
+        public async Task<string> ExportAllCustomer()
+        {
+            var customers = await dbContext.Customers.AsNoTracking().ToListAsync();
+            foreach (var customer in customers)
+            {
+                customer.Id = Guid.Empty;
+            }
+            return JsonSerializer.Serialize(customers);
+        }
+
+        public async Task AllCustomerFromJson(string json)
+        {
+            var customers = JsonSerializer.Deserialize<List<Customer>>(json);
+            await dbContext.Customers.AddRangeAsync(customers);
+            await dbContext.SaveChangesAsync();
+        }
 
         public async Task AddCustomer(string userName, string password, string categories, string course, bool isFinished)
         {

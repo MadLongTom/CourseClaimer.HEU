@@ -2,8 +2,13 @@
 @using CourseClaimer.HEU.Services
 @using CourseClaimer.HEU.Shared.Models.Database
 @inject EntityManagementService EMS
+@inject ClipboardService CS
+@inject SwalService SS
+@inject DialogService DS
 <Button Text="启动所有" IsAsync="true" OnClick="@OnStartClick"></Button>
 <Button Text="停止所有" IsAsync="true" OnClick="@OnStopClick"></Button>
+<Button Text="导出所有用户到JSON" OnClick="Export"></Button>
+<Button Text="从JSON导入所有用户" OnClick="Import"></Button>
 <Divider/>
 <Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[20, 40, 100]" class="table-demo"
        IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
@@ -25,6 +30,19 @@
     {
         await EMS.StopAsync();
         await table.QueryAsync();
+    }
+
+    public async Task Export()
+    {
+        await CS.Copy(await EMS.ExportAllCustomer());
+        await SS.Show(new() { Content = "已复制" });
+    }
+
+    public async Task Import()
+    {
+        await EMS.AllCustomerFromJson(await CS.GetText());
+        await table.QueryAsync();
+        await SS.Show(new() { Content = "已添加" });
     }
 
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)

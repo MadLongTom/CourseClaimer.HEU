@@ -28,6 +28,7 @@
     <PackageReference Include="DotNetCore.CAP" Version="8.2.0" />
     <PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
     <PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.2.0" />
+    <PackageReference Include="DotNetCore.CAP.PostgreSql" Version="8.2.0" />
     <PackageReference Include="DotNetCore.CAP.Sqlite" Version="8.0.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
       <PrivateAssets>all</PrivateAssets>
