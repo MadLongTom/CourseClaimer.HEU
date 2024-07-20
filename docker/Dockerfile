@@ -159,6 +159,5 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy as final
 COPY --from=builder /usr/lib /usr/lib
 RUN git clone https://github.com/MadLongTom/CourseClaimer.Wisedu
 RUN echo cd /CourseClaimer.Wisedu/CourseClaimer.HEU/ \&\& dotnet run > /run.sh
-RUN cd /CourseClaimer.Wisedu && mv ./docker/appsettings.json ./CourseClaimer.HEU/
 RUN chmod 777 /run.sh
 CMD /run.sh
