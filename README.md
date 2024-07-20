@@ -1,6 +1,6 @@
-# CourseClaimer.HEU
+# CourseClaimer.Wisedu
 
-Auto course claiming for HEUer
+Auto course claiming for Wisedu sites.
 
 ## Usage
 
