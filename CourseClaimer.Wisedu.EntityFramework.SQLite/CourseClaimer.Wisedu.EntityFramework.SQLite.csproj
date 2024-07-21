@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CourseClaimer.HEU.Shared\CourseClaimer.Wisedu.Shared.csproj" />
+    <ProjectReference Include="..\CourseClaimer.Wisedu.Shared\CourseClaimer.Wisedu.Shared.csproj" />
   </ItemGroup>
 
 </Project>
