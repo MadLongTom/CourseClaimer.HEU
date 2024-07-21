@@ -11,28 +11,8 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
   "BasePath": "https://jwxk.hrbeu.edu.cn/",
   "AuthPath": "https://jwxk.hrbeu.edu.cn/xsxk/auth/login",
   "DBProvider": "SQLite",
+  "DBProvider_CAP": "InMemory",
 }
-```
-**Notice: Once you changed the DBProvider, you should delete the <code>Migrations</code> folder and run the migrate command**
-
-```shell
-dotnet ef migrations add Init
-```
-
-You can also change the database provider for EventBus(CAP) in <code>Program.cs</code>
-
-```csharp
-builder.Services.AddCap(x =>
-{ 
-    x.UseInMemoryStorage();
-    //x.UseSqlite(cfg => cfg.ConnectionString = "Data Source=CAPDB.db");
-    x.UseInMemoryMessageQueue(); 
-    x.UseDashboard(d =>
-    {
-        d.AllowAnonymousExplicit = true;
-    });
-    x.CollectorCleaningInterval = 5;
-});
 ```
 
 And configure the AesKey
