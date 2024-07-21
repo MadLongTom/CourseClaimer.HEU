@@ -18,25 +18,36 @@ namespace CourseClaimer.Wisedu.Shared.Services
     {
         public List<WorkInfo> WorkInfos { get; set; } = [];
 
-        public async Task<string> ExportAllCustomer()
+        public async Task<(string,string)> ExportAllCustomer()
         {
             var customers = await dbContext.Customers.AsNoTracking().ToListAsync();
             foreach (var customer in customers)
             {
                 customer.Id = Guid.Empty;
             }
-            return JsonSerializer.Serialize(customers);
+            //save to file
+            var path = Path.Combine(Directory.GetCurrentDirectory(), $"customers-{DateTime.Now.ToFileTime()}.json");
+            await File.WriteAllTextAsync(path, JsonSerializer.Serialize(customers));
+            return (JsonSerializer.Serialize(customers), path);
         }
 
-        public async Task AllCustomerFromJson(string json)
+        public async Task AddCustomersFromJson(string json)
         {
             var customers = JsonSerializer.Deserialize<List<Customer>>(json);
+            //remove exists customers
+            var exists = await dbContext.Customers.Select(c => c.UserName).ToListAsync();
+            customers.RemoveAll(c => exists.Contains(c.UserName));
             await dbContext.Customers.AddRangeAsync(customers);
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task AddCustomer(string userName, string password, string categories, string course, bool isFinished)
+        public async Task<bool> AddCustomer(string userName, string password, string categories, string course, bool isFinished)
         {
+            //return if user already exists
+            if (await dbContext.Customers.AnyAsync(c => c.UserName == userName))
+            {
+                return false;
+            }
             var customer = new Customer
             {
                 Id = Guid.NewGuid(),
@@ -49,6 +60,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.Customers.AddAsync(customer);
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
+            return true;
         }
 
         public async Task DeleteCustomer(string userName)

@@ -7,8 +7,8 @@
 @inject DialogService DS
 <Button Text="启动所有" IsAsync="true" OnClick="@OnStartClick"></Button>
 <Button Text="停止所有" IsAsync="true" OnClick="@OnStopClick"></Button>
-<Button Text="导出所有用户到JSON" OnClick="Export"></Button>
-<Button Text="从JSON导入所有用户" OnClick="Import"></Button>
+<Button Text="导出所有用户到JSON" IsAsync="true" OnClick="Export"></Button>
+<Button Text="从JSON导入所有用户" IsAsync="true" OnClick="ToggleModal"></Button>
 <Divider/>
 <Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[20, 40, 100]" class="table-demo"
        IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
@@ -18,8 +18,22 @@
         <TableColumn @bind-Field="@context.Id" Ignore="true" />
     </TableColumns>
 </Table>
+
+<Modal @ref="ImportModal">
+    <ModalDialog Title="导入数据" ShowSaveButton="true" OnSaveAsync="Import" rows="10">
+        <BodyTemplate>
+            <Textarea @bind-Value="BindJson"></Textarea>
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>
 @code
 {
+    public async Task ToggleModal()
+    { 
+        await ImportModal.Toggle();
+    }
+    public string BindJson { get; set; } = string.Empty;
+    public Modal ImportModal { get; set; }
     public Table<Customer> table { get; set; }
     public async Task OnStartClick()
     {
@@ -34,15 +48,18 @@
 
     public async Task Export()
     {
-        await CS.Copy(await EMS.ExportAllCustomer());
-        await SS.Show(new() { Content = "已复制" });
+        var result = await EMS.ExportAllCustomer();
+        await CS.Copy(result.Item1);
+        await SS.Show(new() { Content = $"已复制到剪贴板，文件已保存到{Environment.NewLine}{result.Item2}" });
     }
 
-    public async Task Import()
+    public async Task<bool> Import()
     {
-        await EMS.AllCustomerFromJson(await CS.GetText());
+        await EMS.AddCustomersFromJson(BindJson);
+        BindJson = string.Empty;
         await table.QueryAsync();
         await SS.Show(new() { Content = "已添加" });
+        return true;
     }
 
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)
@@ -62,8 +79,7 @@
                 await EMS.EditCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
                 break;
             case ItemChangedType.Add:
-                await EMS.AddCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
-                break;
+                return await EMS.AddCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished);
         }
         return true;
     }
