@@ -3,13 +3,13 @@ using CourseClaimer.Wisedu.Shared.Dto;
 using CourseClaimer.Wisedu.Shared.Enums;
 using CourseClaimer.Wisedu.Shared.Extensions;
 using CourseClaimer.Wisedu.Shared.Models.Database;
-using CourseClaimer.Wisedu.Shared.Models.JWXK;
 using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
 using CourseClaimer.Wisedu.Shared.Models.Runtime;
 using DotNetCore.CAP;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Row = CourseClaimer.Wisedu.Shared.Models.JWXK.Row;
 
 namespace CourseClaimer.Wisedu.Shared.Services
 {
@@ -24,6 +24,18 @@ namespace CourseClaimer.Wisedu.Shared.Services
             var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == entity.username);
             customer.IsFinished = true;
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task LogEntityRecord(Entity entity, string message)
+        {
+            logger.LogWarning($"Possibly overspeeding!{Environment.NewLine}{message}");
+            var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
+            dbContext.EntityRecords.Add(new EntityRecord()
+            {
+                UserName = entity.username,
+                Message = message
+            });
             await dbContext.SaveChangesAsync();
         }
 
@@ -42,6 +54,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task<List<Row>> GetAvailableList(Entity entity)
         {
             var res = await entity.GetRowList().ToResponseDto<ListRoot>();
+            if (res.Exception != null)
+            {
+                await LogEntityRecord(entity,
+                    $@"GetRowList: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
+                return [];
+            }
             if (!res.IsSuccess) return [];
             var availableRows = res.Data.data.rows.Where(q => q.classCapacity > q.numberOfSelected);
             //if (availableRows.Count() != 0)
@@ -62,8 +80,13 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task<List<Row>> GetAllList(Entity entity)
         {
             var res = await entity.GetRowList().ToResponseDto<ListRoot>();
-            //logger.LogInformation($"AllList:{entity.username} found available course {string.Join('|', res.Data.data.rows.Select(c => c.KCM))}");
-            //find all unadded rows in AllRows
+            if (res.Exception != null)
+            {
+                await LogEntityRecord(entity,
+                    $@"GetRowList: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
+                return [];
+            }
+            if (!res.IsSuccess) return [];
             foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.KCH != r.KCH)))
             {
                 ProgramExtensions.AllRows.Add(new() { KCH = row.KCH, KCM = row.KCM, XGXKLB = row.XGXKLB });
@@ -81,6 +104,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task<AddResult> Add(Entity entity, Row @class)
         {
             var res = await entity.Add(@class).ToResponseDto<AddRoot>();
+            if (res.Exception != null)
+            {
+                await LogEntityRecord(entity,
+                    $@"Add: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
+                return AddResult.UnknownError;
+            }
             if (res.InnerCode == HttpStatusCode.OK)
             {
                 logger.LogInformation($"Add:{entity.username} has claimed {@class.KCM}({@class.XGXKLB})");
@@ -108,6 +137,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task<ValidateResult> ValidateClaim(Entity entity, Row @class)
         {
             var res = await entity.ValidateClaim(@class).ToResponseDto<SelectRoot>();
+            if (res.Exception != null)
+            {
+                await LogEntityRecord(entity,
+                    $@"Validate: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
+                return ValidateResult.UnknownError;
+            }
             if (res.IsSuccess)
             {
                 return res.Data.data.Any(q => q.KCH == @class.KCH) ? ValidateResult.Success : ValidateResult.Miss;

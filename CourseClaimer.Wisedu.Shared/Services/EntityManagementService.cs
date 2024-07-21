@@ -145,7 +145,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                         customer.Categories == string.Empty
                             ? []
                             : customer.Categories.Split(',').Select(p => xgxklbs[p]).ToList(),
-                        customer.Course == string.Empty ? [] : customer.Course.Split(',').ToList(), [], false, null);
+                        customer.Course == string.Empty ? [] : [.. customer.Course.Split(',')], [], false, null);
                     ProgramExtensions.Entities.Add(entity);
                     var cts = new CancellationTokenSource();
                     LoginResult loginResult;
@@ -160,7 +160,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                         dbContext.EntityRecords.Add(new EntityRecord()
                         {
                             UserName = customer.UserName,
-                            Message = "Wrong Password"
+                            Message = "Login: Wrong Password"
                         });
                         dbContext.Customers.Remove(customer);
                         await dbContext.SaveChangesAsync();

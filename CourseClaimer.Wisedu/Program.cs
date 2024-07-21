@@ -1,19 +1,18 @@
-﻿using CourseClaimer.Wisedu.Components;
-using CourseClaimer.Ocr;
+﻿using CourseClaimer.Ocr;
+using CourseClaimer.Wisedu.Components;
+using CourseClaimer.Wisedu.Shared.Handlers;
+using CourseClaimer.Wisedu.Shared.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
 using System.Security.Cryptography;
 using System.Text;
-using CourseClaimer.Wisedu.Shared.Handlers;
-using CourseClaimer.Wisedu.Shared.Services;
-using DotNetCore.CAP;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+
 // Add services to the container.
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -38,7 +37,6 @@ builder.Services.AddCap(x =>
             x.UseSqlite(@"Data Source=CAPDB.db;");
             break;
     }
-
     x.UseInMemoryMessageQueue();
     x.UseDashboard(d =>
     {
