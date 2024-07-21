@@ -60,6 +60,15 @@ namespace CourseClaimer.Wisedu.Shared.Services
                     $@"GetRowList: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
                 return [];
             }
+
+            if (res.InnerMessage.Contains("请重新登录"))
+            {
+                LoginResult loginResult;
+                do loginResult = await authorizeService.MakeUserLogin(entity, true);
+                while (loginResult == LoginResult.WrongCaptcha);
+                if (loginResult == LoginResult.WrongPassword) entity.finished = true;
+            }
+
             if (!res.IsSuccess) return [];
             var availableRows = res.Data.data.rows.Where(q => q.classCapacity > q.numberOfSelected);
             //if (availableRows.Count() != 0)
@@ -86,6 +95,15 @@ namespace CourseClaimer.Wisedu.Shared.Services
                     $@"GetRowList: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
                 return [];
             }
+
+            if (res.InnerMessage.Contains("请重新登录"))
+            {
+                LoginResult loginResult;
+                do loginResult = await authorizeService.MakeUserLogin(entity, true);
+                while (loginResult == LoginResult.WrongCaptcha);
+                if (loginResult == LoginResult.WrongPassword) entity.finished = true;
+            }
+
             if (!res.IsSuccess) return [];
             foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.KCH != r.KCH)))
             {
@@ -197,7 +215,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                     case AddResult.AuthorizationExpired:
                         entity.IsAddPending = true;
                         LoginResult loginResult;
-                        do loginResult = await authorizeService.MakeUserLogin(entity);
+                        do loginResult = await authorizeService.MakeUserLogin(entity,true);
                         while (loginResult == LoginResult.WrongCaptcha);
                         if (loginResult == LoginResult.WrongPassword) entity.finished = true;
                         entity.IsAddPending = false;

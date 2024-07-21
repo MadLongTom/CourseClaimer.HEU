@@ -156,8 +156,8 @@ RUN dotnet test /opencvsharp/test/OpenCvSharp.Tests/OpenCvSharp.Tests.csproj -c 
 
 USER app
 WORKDIR /app
-EXPOSE 5074
-EXPOSE 5075
+EXPOSE 8080
+EXPOSE 8081
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -183,4 +183,4 @@ RUN dotnet publish "./CourseClaimer.Wisedu.csproj" -c $BUILD_CONFIGURATION -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CourseClaimer.Wisedu.dll", "--launch-profile", "https"]
+ENTRYPOINT ["dotnet", "CourseClaimer.Wisedu.dll"]

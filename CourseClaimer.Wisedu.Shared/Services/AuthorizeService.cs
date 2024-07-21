@@ -4,15 +4,26 @@ using System.Text;
 using CourseClaimer.Ocr;
 using CourseClaimer.Wisedu.Shared.Enums;
 using CourseClaimer.Wisedu.Shared.Extensions;
+using CourseClaimer.Wisedu.Shared.Models.Database;
 using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
 using CourseClaimer.Wisedu.Shared.Models.Runtime;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseClaimer.Wisedu.Shared.Services
 {
-    public class AuthorizeService(Aes aesUtil, OcrService ocr, IHttpClientFactory clientFactory)
+    public class AuthorizeService(Aes aesUtil, OcrService ocr, IHttpClientFactory clientFactory,IConfiguration configuration,IServiceProvider serviceProvider)
     {
-        public async Task<LoginResult> MakeUserLogin(Entity entity)
+        public async Task<LoginResult> MakeUserLogin(Entity entity,bool IsReLogin = false)
         {
+            var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
+            dbContext.EntityRecords.Add(new EntityRecord()
+            {
+                UserName = entity.username,
+                Message = $"MakeUserLogin: {entity.username} entered with IsReLogin={IsReLogin}"
+            });
+            await dbContext.SaveChangesAsync();
+            if (IsReLogin) await Task.Delay(Convert.ToInt32(configuration["ReLoginDelayMilliseconds"]));
             entity.finished = false;
             entity.client = clientFactory.CreateClient("JWXK");
             var captcha = await entity.Captcha().ToResponseDto<CaptchaRoot>();
