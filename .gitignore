@@ -361,7 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/CourseClaimer.HEU/ClaimerDB.db
-/CourseClaimer.HEU/ClaimerDB.db-shm
-/CourseClaimer.HEU/ClaimerDB.db-wal
-/CourseClaimer.HEU/CAPDB.db
+/CourseClaimer.Wisedu/ClaimerDB.db
+/CourseClaimer.Wisedu/ClaimerDB.db-shm
+/CourseClaimer.Wisedu/ClaimerDB.db-wal
+/CourseClaimer.Wisedu/CAPDB.db
+/CourseClaimer.Wisedu/*.json
+/CourseClaimer.Wisedu/ClaimerDB.db
+/CourseClaimer.Wisedu/ClaimerDB.db-shm
+/CourseClaimer.Wisedu/ClaimerDB.db-wal
+/CourseClaimer.Wisedu/CAPDB.db
