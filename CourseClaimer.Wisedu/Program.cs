@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
 using System.Security.Cryptography;
 using System.Text;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +93,18 @@ builder.Services.AddSingleton<Aes>(inst =>
     return util;
 });
 
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metricsOpts => metricsOpts.AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter())
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation();
+        tracing.AddHttpClientInstrumentation();
+    });
+
+
 builder.Services.AddTransient<MapForwarderHandler>();
 builder.Services.AddSingleton<OcrService>();
 builder.Services.AddSingleton<AuthorizeService>();
@@ -112,6 +126,8 @@ app.Services.CreateScope().ServiceProvider.GetRequiredService<ClaimDbContext>().
 app.UseStaticFiles();
 
 app.UseAntiforgery();
+
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
