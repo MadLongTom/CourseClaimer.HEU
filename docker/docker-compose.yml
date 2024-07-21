@@ -11,6 +11,7 @@ services:
       - 8081:8081
     restart: 'unless-stopped'
     environment:
+      - DBProvider=PostgreSQL
       - PGSQL=User ID=Erwwyh;Password=PGsql_erw;Host=172.17.0.1;Port=5432;Database=HEUjwqk;
       - PGSQL_CAP=User ID=Erwwyh;Password=PGsql_erw;Host=172.17.0.1;Port=5432;Database=HEUjwqk_CAP;
       - DBProvider=PostgreSQL
