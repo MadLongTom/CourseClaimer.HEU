@@ -1,7 +1,7 @@
-﻿using CourseClaimer.HEU.Shared.Models.Database;
+﻿using CourseClaimer.Wisedu.Shared.Models.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseClaimer.HEU.Services;
+namespace CourseClaimer.Wisedu.Shared.Services;
 
 public class ClaimDbContext : DbContext
 {

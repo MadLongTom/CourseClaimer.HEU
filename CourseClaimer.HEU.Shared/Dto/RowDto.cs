@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+
 #pragma warning  disable CS8618
-namespace CourseClaimer.HEU.Shared.Dto
+namespace CourseClaimer.Wisedu.Shared.Dto
 {
     public class RowDto
     {

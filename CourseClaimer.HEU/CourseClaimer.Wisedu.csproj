@@ -45,8 +45,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CourseClaimer.HEU.Shared\CourseClaimer.HEU.Shared.csproj" />
+    <ProjectReference Include="..\CourseClaimer.HEU.Shared\CourseClaimer.Wisedu.Shared.csproj" />
     <ProjectReference Include="..\CourseClaimer.Ocr\CourseClaimer.Ocr.csproj" />
+    <ProjectReference Include="..\CourseClaimer.Wisedu.EntityFramework.PostgreSQL\CourseClaimer.Wisedu.EntityFramework.PostgreSQL.csproj" />
+    <ProjectReference Include="..\CourseClaimer.Wisedu.EntityFramework.SQLite\CourseClaimer.Wisedu.EntityFramework.SQLite.csproj" />
+    <ProjectReference Include="..\CourseClaimer.Wisedu.EntityFramework.SQLServer\CourseClaimer.Wisedu.EntityFramework.SQLServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

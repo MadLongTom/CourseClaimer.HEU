@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using CourseClaimer.HEU.Shared.Dto;
-using CourseClaimer.HEU.Shared.Enums;
-using CourseClaimer.HEU.Shared.Extensions;
-using CourseClaimer.HEU.Shared.Models.Database;
-using CourseClaimer.HEU.Shared.Models.JWXK;
-using CourseClaimer.HEU.Shared.Models.JWXK.Roots;
-using CourseClaimer.HEU.Shared.Models.Runtime;
+﻿using System.Net;
+using CourseClaimer.Wisedu.Shared.Dto;
+using CourseClaimer.Wisedu.Shared.Enums;
+using CourseClaimer.Wisedu.Shared.Extensions;
+using CourseClaimer.Wisedu.Shared.Models.Database;
+using CourseClaimer.Wisedu.Shared.Models.JWXK;
+using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
+using CourseClaimer.Wisedu.Shared.Models.Runtime;
 using DotNetCore.CAP;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
-namespace CourseClaimer.HEU.Services
+namespace CourseClaimer.Wisedu.Shared.Services
 {
     public class ClaimService(
         ILogger<ClaimService> logger,

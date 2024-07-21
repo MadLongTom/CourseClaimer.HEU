@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseClaimer.HEU.Shared.Models.JWXK.Roots
+﻿namespace CourseClaimer.Wisedu.Shared.Models.JWXK.Roots
 {
     public class BaseRoot
     {

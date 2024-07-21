@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using CourseClaimer.HEU.Shared.Models.JWXK;
-using CourseClaimer.HEU.Shared.Models.Runtime;
+using CourseClaimer.Wisedu.Shared.Models.JWXK;
+using CourseClaimer.Wisedu.Shared.Models.Runtime;
 
-namespace CourseClaimer.HEU.Shared.Extensions
+namespace CourseClaimer.Wisedu.Shared.Extensions
 {
     public static class EntityExtensions
     {

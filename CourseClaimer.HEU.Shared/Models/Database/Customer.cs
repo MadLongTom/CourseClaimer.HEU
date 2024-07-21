@@ -1,13 +1,8 @@
-﻿using BootstrapBlazor.Components;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BootstrapBlazor.Components;
 
-namespace CourseClaimer.HEU.Shared.Models.Database
+namespace CourseClaimer.Wisedu.Shared.Models.Database
 {
     public class Customer
     {

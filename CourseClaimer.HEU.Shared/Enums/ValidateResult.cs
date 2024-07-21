@@ -1,4 +1,4 @@
-﻿namespace CourseClaimer.HEU.Shared.Enums;
+﻿namespace CourseClaimer.Wisedu.Shared.Enums;
 
 public enum ValidateResult
 {

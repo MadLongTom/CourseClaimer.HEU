@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 #pragma warning disable CS8618
-namespace CourseClaimer.HEU.Shared.Models.JWXK;
+namespace CourseClaimer.Wisedu.Shared.Models.JWXK;
 
 public class Electivebatchlist
 {

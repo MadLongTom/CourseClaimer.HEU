@@ -1,9 +1,10 @@
-﻿using CourseClaimer.HEU.Shared.Extensions;
-using CourseClaimer.HEU.Shared.Models.JWXK;
-using CourseClaimer.HEU.Shared.Models.Runtime;
+﻿using CourseClaimer.Wisedu.Shared.Extensions;
+using CourseClaimer.Wisedu.Shared.Models.JWXK;
+using CourseClaimer.Wisedu.Shared.Models.Runtime;
 using DotNetCore.CAP;
+using Microsoft.Extensions.Logging;
 
-namespace CourseClaimer.HEU.Services
+namespace CourseClaimer.Wisedu.Shared.Services
 {
     public class CapClaimService(ILogger<CapClaimService> logger, ClaimService claimService) : ICapSubscribe
     {

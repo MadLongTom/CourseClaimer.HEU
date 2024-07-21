@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseClaimer.HEU.Shared.Dto
+﻿namespace CourseClaimer.Wisedu.Shared.Dto
 {
     public class QueryDto<T> where T: class
     {

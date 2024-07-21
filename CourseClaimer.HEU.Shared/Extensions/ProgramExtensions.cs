@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CourseClaimer.HEU.Shared.Dto;
-using CourseClaimer.HEU.Shared.Models.Runtime;
+﻿using CourseClaimer.Wisedu.Shared.Dto;
+using CourseClaimer.Wisedu.Shared.Models.Runtime;
 
-namespace CourseClaimer.HEU.Shared.Extensions
+namespace CourseClaimer.Wisedu.Shared.Extensions
 {
     public static class ProgramExtensions
     {

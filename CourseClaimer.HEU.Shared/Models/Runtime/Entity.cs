@@ -1,10 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 #pragma warning disable CS8618
 using System.Diagnostics;
-using CourseClaimer.HEU.Shared.Dto;
-using CourseClaimer.HEU.Shared.Models.JWXK;
+using CourseClaimer.Wisedu.Shared.Dto;
+using CourseClaimer.Wisedu.Shared.Models.JWXK;
 
-namespace CourseClaimer.HEU.Shared.Models.Runtime;
+namespace CourseClaimer.Wisedu.Shared.Models.Runtime;
 
 public record Entity(string username, string password, List<string> category, List<string> courses, List<Row> done, bool finished, string? batchId)
 {

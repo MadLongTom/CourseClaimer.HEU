@@ -1,7 +1,7 @@
 ﻿using BootstrapBlazor.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace CourseClaimer.HEU.Components.Shared
+namespace CourseClaimer.Wisedu.Components.Shared
 {
     /// <summary>
     /// 

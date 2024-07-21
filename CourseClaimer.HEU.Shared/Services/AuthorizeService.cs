@@ -1,13 +1,13 @@
 ﻿using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using CourseClaimer.HEU.Shared.Enums;
-using CourseClaimer.HEU.Shared.Extensions;
-using CourseClaimer.HEU.Shared.Models.JWXK.Roots;
-using CourseClaimer.HEU.Shared.Models.Runtime;
 using CourseClaimer.Ocr;
+using CourseClaimer.Wisedu.Shared.Enums;
+using CourseClaimer.Wisedu.Shared.Extensions;
+using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
+using CourseClaimer.Wisedu.Shared.Models.Runtime;
 
-namespace CourseClaimer.HEU.Services
+namespace CourseClaimer.Wisedu.Shared.Services
 {
     public class AuthorizeService(Aes aesUtil, OcrService ocr, IHttpClientFactory clientFactory)
     {

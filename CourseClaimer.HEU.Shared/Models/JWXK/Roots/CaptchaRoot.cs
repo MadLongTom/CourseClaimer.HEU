@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 #pragma warning disable CS8618
-namespace CourseClaimer.HEU.Shared.Models.JWXK.Roots;
+namespace CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
 
 public class CaptchaRoot : BaseRoot
 {

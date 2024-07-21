@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using CourseClaimer.HEU.Shared.Dto;
-using CourseClaimer.HEU.Shared.Models.JWXK.Roots;
+using CourseClaimer.Wisedu.Shared.Dto;
+using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
 
-namespace CourseClaimer.HEU.Shared.Extensions
+namespace CourseClaimer.Wisedu.Shared.Extensions
 {
     public static class ResponseExtensions
     {

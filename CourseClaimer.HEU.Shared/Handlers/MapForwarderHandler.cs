@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
-namespace CourseClaimer.HEU.Shared.Handlers
+namespace CourseClaimer.Wisedu.Shared.Handlers
 {
     public class MapForwarderHandler(IConfiguration configuration) : DelegatingHandler
     {

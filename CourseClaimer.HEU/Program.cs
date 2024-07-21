@@ -1,15 +1,19 @@
-﻿using CourseClaimer.HEU.Services;
-using CourseClaimer.HEU.Shared.Handlers;
-using CourseClaimer.HEU.Components;
+﻿using CourseClaimer.Wisedu.Components;
 using CourseClaimer.Ocr;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
 using System.Security.Cryptography;
 using System.Text;
+using CourseClaimer.Wisedu.Shared.Handlers;
+using CourseClaimer.Wisedu.Shared.Services;
+using DotNetCore.CAP;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 // Add services to the container.
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -21,40 +25,40 @@ builder.Services.AddBootstrapBlazor();
 builder.Services.Configure<HubOptions>(option => option.MaximumReceiveMessageSize = null);
 
 builder.Services.AddCap(x =>
-{ 
-    switch(builder.Configuration["DBProvider"])
+{
+    switch (builder.Configuration["DBProvider_CAP"])
     {
+        case "InMemory":
+            x.UseInMemoryStorage();
+            break;
+        case "PostgreSQL":
+            x.UsePostgreSql(builder.Configuration["PGSQL_CAP"]);
+            break;
         case "SQLite":
             x.UseSqlite(@"Data Source=CAPDB.db;");
             break;
-        case "PostgreSQL":
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            x.UsePostgreSql(builder.Configuration["PGSQL_CAP"]);
-            break;
-        default:
-            x.UseInMemoryStorage();
-            break;
     }
-    x.UseInMemoryMessageQueue(); 
+
+    x.UseInMemoryMessageQueue();
     x.UseDashboard(d =>
     {
         d.AllowAnonymousExplicit = true;
     });
     x.CollectorCleaningInterval = 5;
 });
+
 builder.Services.AddDbContext<ClaimDbContext>(optionsBuilder =>
 {
     switch (builder.Configuration["DBProvider"])
     {
         case "SQLServer":
-            optionsBuilder.UseSqlServer(@"Server=.;Database=ClaimerDb;Trusted_Connection=True;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer(@"Server=.;Database=ClaimerDb;Trusted_Connection=True;TrustServerCertificate=true", s => s.MigrationsAssembly("CourseClaimer.Wisedu.EntityFramework.SQLServer"));
             break;
         case "SQLite":
-            optionsBuilder.UseSqlite(@"Data Source=ClaimerDB.db;");
+            optionsBuilder.UseSqlite(@"Data Source=ClaimerDB.db;", s => s.MigrationsAssembly("CourseClaimer.Wisedu.EntityFramework.SQLite"));
             break;
         case "PostgreSQL":
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            optionsBuilder.UseNpgsql(builder.Configuration["PGSQL"]);
+            optionsBuilder.UseNpgsql(builder.Configuration["PGSQL"],s => s.MigrationsAssembly("CourseClaimer.Wisedu.EntityFramework.PostgreSQL"));
             break;
         default:
             throw new("Unknown DBType");
