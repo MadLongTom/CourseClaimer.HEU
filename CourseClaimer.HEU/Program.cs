@@ -22,8 +22,19 @@ builder.Services.Configure<HubOptions>(option => option.MaximumReceiveMessageSiz
 
 builder.Services.AddCap(x =>
 { 
-    x.UseInMemoryStorage();
-    //x.UseSqlite(cfg => cfg.ConnectionString = "Data Source=CAPDB.db");
+    switch(builder.Configuration["DBProvider"])
+    {
+        case "SQLite":
+            x.UseSqlite(@"Data Source=CAPDB.db;");
+            break;
+        case "PostgreSQL":
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            x.UsePostgreSql(builder.Configuration["PGSQL_CAP"]);
+            break;
+        default:
+            x.UseInMemoryStorage();
+            break;
+    }
     x.UseInMemoryMessageQueue(); 
     x.UseDashboard(d =>
     {
