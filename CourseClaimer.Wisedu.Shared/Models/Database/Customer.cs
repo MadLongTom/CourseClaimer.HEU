@@ -21,5 +21,10 @@ namespace CourseClaimer.Wisedu.Shared.Models.Database
         public bool IsFinished { get; set; }
         [DisplayName("优先级（越大越前）")] 
         public int Priority { get; set; } = 0;
+        [DisplayName("代理商")] 
+        public string Tenant { get; set; } = string.Empty;
+        [DisplayName("联系方式")]
+        public string Contact { get; set; } = string.Empty;
+
     }
 }

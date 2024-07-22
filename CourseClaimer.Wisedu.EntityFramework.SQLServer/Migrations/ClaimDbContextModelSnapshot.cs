@@ -28,8 +28,16 @@ namespace CourseClaimer.Wisedu.EntityFramework.SQLServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ClaimTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Course")
                         .IsRequired()
@@ -37,6 +45,10 @@ namespace CourseClaimer.Wisedu.EntityFramework.SQLServer.Migrations
 
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -57,6 +69,10 @@ namespace CourseClaimer.Wisedu.EntityFramework.SQLServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Course")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -70,6 +86,10 @@ namespace CourseClaimer.Wisedu.EntityFramework.SQLServer.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()

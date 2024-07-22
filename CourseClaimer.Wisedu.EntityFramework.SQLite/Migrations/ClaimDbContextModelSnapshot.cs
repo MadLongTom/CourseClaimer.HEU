@@ -23,7 +23,15 @@ namespace CourseClaimer.HEU.Shared.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ClaimTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Contact")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Course")
@@ -32,6 +40,10 @@ namespace CourseClaimer.HEU.Shared.Migrations
 
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -52,6 +64,10 @@ namespace CourseClaimer.HEU.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Course")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -65,6 +81,10 @@ namespace CourseClaimer.HEU.Shared.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
                         .IsRequired()

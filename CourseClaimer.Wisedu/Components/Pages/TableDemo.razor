@@ -76,10 +76,10 @@
         switch (type)
         {
             case ItemChangedType.Update:
-                await EMS.EditCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished, customer.Priority);
+                await EMS.EditCustomer(customer);
                 break;
             case ItemChangedType.Add:
-                return await EMS.AddCustomer(customer.UserName, customer.Password, customer.Categories, customer.Course, customer.IsFinished, customer.Priority);
+                return await EMS.AddCustomer(customer);
         }
         return true;
     }

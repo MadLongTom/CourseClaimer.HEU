@@ -48,23 +48,13 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> AddCustomer(string userName, string password, string categories, string course, bool isFinished,int priority)
+        public async Task<bool> AddCustomer(Customer customer)
         {
             //return if user already exists
-            if (await dbContext.Customers.AnyAsync(c => c.UserName == userName))
+            if (await dbContext.Customers.AnyAsync(c => c.UserName == customer.UserName))
             {
                 return false;
             }
-            var customer = new Customer
-            {
-                Id = Guid.NewGuid(),
-                UserName = userName,
-                Password = password,
-                Categories = categories,
-                Course = course,
-                IsFinished = isFinished,
-                Priority = priority
-            };
             await dbContext.Customers.AddAsync(customer);
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
@@ -137,14 +127,21 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task EditCustomer(string userName, string password, string categories, string course, bool isFinished,int priority)
+        public async Task EditCustomer(Customer customer)
         {
-            var customer = await dbContext.Customers.FirstAsync(c => c.UserName == userName);
-            customer.Password = password;
-            customer.Categories = categories;
-            customer.Course = course;
-            customer.IsFinished = isFinished;
-            customer.Priority = priority;
+            var local = dbContext.Set<Customer>()
+                .Local
+                .FirstOrDefault(entry => entry.Id.Equals(customer.Id));
+
+            // Check if local is not null 
+            if (local != null)
+            {
+                // Detach
+                dbContext.Entry(local).State = EntityState.Detached;
+            }
+            // Set Modified state
+            dbContext.Entry(customer).State = EntityState.Modified;
+
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
         }
@@ -211,7 +208,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task WebStartAsync(CancellationToken cancellationToken = default)
         {
-            var customers = await dbContext.Customers.OrderByDescending(c => c.Priority).ToListAsync(cancellationToken);
+            var customers = await dbContext.Customers.AsNoTracking().OrderByDescending(c => c.Priority).ToListAsync(cancellationToken);
             foreach (var customer in customers)
             {
                 customer.IsFinished = false;
@@ -222,7 +219,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            var customers = await dbContext.Customers.ToListAsync(cancellationToken);
+            var customers = await dbContext.Customers.AsNoTracking().ToListAsync(cancellationToken);
             foreach (var customer in customers)
             {
                 customer.IsFinished = true;
