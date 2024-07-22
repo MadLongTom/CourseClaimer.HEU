@@ -54,6 +54,10 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
   "DBProvider": "SQLite",
   "DBProvider_CAP": "InMemory",
   "ReLoginDelayMilliseconds": 300000,
+  "CapTakeNum": 5,
+  "QuartzDelayMilliseconds": 300000,
+  "CronSchedule": "0 18/20 * * * ? ",
+  "UseQuartz": false,
 }
 ```
 
