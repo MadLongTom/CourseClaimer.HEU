@@ -43,6 +43,14 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 Message = message
             });
             await dbContext.SaveChangesAsync();
+            LoginResult loginResult;
+            do loginResult = await authorizeService.MakeUserLogin(entity);
+            while (loginResult == LoginResult.WrongCaptcha);
+            if (loginResult == LoginResult.WrongPassword)
+            {
+                await MakeUserFinished(entity);
+                entity.finished = true;
+            }
         }
 
         public async Task LogClaimRecord(Entity entity, Row @class, bool success)
@@ -157,7 +165,9 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 foreach (var KCM in KCMList)
                 {
                     if (!dbContext.ClaimRecords
-                            .Where(c => c.UserName == entity.username).Where(c => c.Course.Contains(KCM)).Any(c => c.IsSuccess == true))
+                            .Where(c => c.UserName == entity.username)
+                            .Where(c => c.Course.Contains(KCM))
+                            .Any(c => c.IsSuccess == true))
                     {
                         var row = res.Data.data.First(c => c.KCM == KCM);
                         dbContext.ClaimRecords.Add(new ClaimRecord()
