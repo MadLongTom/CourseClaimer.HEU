@@ -9,7 +9,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
     public static class EntityExtensions
     {
         private const int LimitListMillSeconds = 400;
-        private const int LimitAddMillSeconds = 250;
+        private const int LimitAddMillSeconds = 350;
 
         public static HttpRequestMessage BuildPostRequest(string url, Entity entity, MediaTypeHeaderValue? contentType, HttpContent content)
         {
