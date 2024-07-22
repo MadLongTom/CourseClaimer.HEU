@@ -2,9 +2,17 @@
 
 Auto course claiming for Wisedu sites.
 
+## Annotations
+
+![image](https://github.com/user-attachments/assets/9c51eaeb-f426-4f00-aa3a-a23e7311cd33)
+
 ## Configuration
 
 In <code>appsettings.json</code>, edit your hostadresss, login port and database provider.
+
+## OpenTelemetry
+
+Use **Prometheus** to manage tracing and metrics
 
 ```json
 {
@@ -12,6 +20,7 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
   "AuthPath": "https://jwxk.hrbeu.edu.cn/xsxk/auth/login",
   "DBProvider": "SQLite",
   "DBProvider_CAP": "InMemory",
+  "ReLoginDelayMilliseconds": 300000,
 }
 ```
 
