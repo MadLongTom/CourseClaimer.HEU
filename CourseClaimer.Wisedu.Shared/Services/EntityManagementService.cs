@@ -41,7 +41,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> AddCustomer(string userName, string password, string categories, string course, bool isFinished)
+        public async Task<bool> AddCustomer(string userName, string password, string categories, string course, bool isFinished,int priority)
         {
             //return if user already exists
             if (await dbContext.Customers.AnyAsync(c => c.UserName == userName))
@@ -55,7 +55,8 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 Password = password,
                 Categories = categories,
                 Course = course,
-                IsFinished = isFinished
+                IsFinished = isFinished,
+                Priority = priority
             };
             await dbContext.Customers.AddAsync(customer);
             await dbContext.SaveChangesAsync();
@@ -117,13 +118,14 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task EditCustomer(string userName, string password, string categories, string course, bool isFinished)
+        public async Task EditCustomer(string userName, string password, string categories, string course, bool isFinished,int priority)
         {
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == userName);
             customer.Password = password;
             customer.Categories = categories;
             customer.Course = course;
             customer.IsFinished = isFinished;
+            customer.Priority = priority;
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
         }

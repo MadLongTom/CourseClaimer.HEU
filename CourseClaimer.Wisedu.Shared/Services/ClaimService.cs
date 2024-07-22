@@ -46,7 +46,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
             {
                 IsSuccess = success,
                 UserName = entity.username,
-                Course = @class.KCM + @class.XGXKLB,
+                Course = $"{@class.KCM}|{@class.XGXKLB}",
             });
             await dbContext.SaveChangesAsync();
         }

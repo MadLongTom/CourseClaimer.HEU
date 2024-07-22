@@ -10,15 +10,17 @@ namespace CourseClaimer.Wisedu.Shared.Services
     public class CapClaimService(ILogger<CapClaimService> logger, ClaimService claimService,IConfiguration configuration) : ICapSubscribe
     {
         private int takeNum = Convert.ToInt32(configuration["CapTakeNum"]); 
+
         [CapSubscribe("ClaimService.RowAvailable")]
         public async Task CapClaimRow(Row row)
         {
             foreach (var entity in ProgramExtensions.Entities.Where(entity =>
                          entity.SubscribedRows.Contains(row.KCH) && !entity.IsAddPending)
-                         .OrderByDescending(e => e.priority).Take(takeNum))
+                         .OrderByDescending(e => e.priority)
+                         .Take(takeNum))
             {
-                logger.LogInformation($"CapClaimRow:{entity.username} Ready to claim {row.KCM}");
                 _ = claimService.Claim(entity, row);
+                logger.LogInformation($"CapClaimRow:{entity.username} is claiming {row.KCM}");
             }
         }
 
