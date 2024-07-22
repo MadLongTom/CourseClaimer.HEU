@@ -208,7 +208,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task WebStartAsync(CancellationToken cancellationToken = default)
         {
-            var customers = await dbContext.Customers.AsNoTracking().OrderByDescending(c => c.Priority).ToListAsync(cancellationToken);
+            var customers = await dbContext.Customers.OrderByDescending(c => c.Priority).ToListAsync(cancellationToken);
             foreach (var customer in customers)
             {
                 customer.IsFinished = false;
@@ -219,7 +219,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            var customers = await dbContext.Customers.AsNoTracking().ToListAsync(cancellationToken);
+            var customers = await dbContext.Customers.ToListAsync(cancellationToken);
             foreach (var customer in customers)
             {
                 customer.IsFinished = true;
