@@ -101,6 +101,28 @@ namespace CourseClaimer.Wisedu.EntityFramework.PostgreSQL.Migrations
 
                     b.ToTable("EntityRecords");
                 });
+
+            modelBuilder.Entity("CourseClaimer.Wisedu.Shared.Models.Database.JobRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExecuteTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobRecords");
+                });
 #pragma warning restore 612, 618
         }
     }

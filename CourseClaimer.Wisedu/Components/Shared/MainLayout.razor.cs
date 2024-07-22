@@ -42,7 +42,8 @@ namespace CourseClaimer.Wisedu.Components.Shared
                 new() { Text = "添加账号", Icon = "fa-solid fa-fw fa-table", Url = "/table" },
                 new() { Text = "选课记录", Icon = "fa-solid fa-fw fa-check-square", Url = "/tableRecord" },
                 new() { Text = "账号日志", Icon = "fa-solid fa-fw fa-check-square", Url = "/tableEntity" },
-                new() { Text = "课程列表", Icon = "fa-solid fa-fw fa-check-square", Url = "/tableRow" }
+                new() { Text = "课程列表", Icon = "fa-solid fa-fw fa-check-square", Url = "/tableRow" },
+                new() { Text = "定时任务", Icon = "fa-solid fa-fw fa-check-square", Url = "/tableJob" }
             };
 
             return menus;

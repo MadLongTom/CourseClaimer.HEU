@@ -96,6 +96,28 @@ namespace CourseClaimer.HEU.Shared.Migrations
 
                     b.ToTable("EntityRecords");
                 });
+
+            modelBuilder.Entity("CourseClaimer.Wisedu.Shared.Models.Database.JobRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExecuteTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobRecords");
+                });
 #pragma warning restore 612, 618
         }
     }

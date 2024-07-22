@@ -111,7 +111,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
             { "jxblx","YXKCYX_XGKC"}
         };
 
-        public static async Task<HttpResponseMessage> ValidateClaim(this Entity entity, Row @class)
+        public static async Task<HttpResponseMessage> ValidateClaim(this Entity entity)
         {
             HttpRequestMessage hrt = BuildPostRequest(selectUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(selectData));
             var selectResponse = await entity.client.LimitSendAsync(hrt, entity,true);

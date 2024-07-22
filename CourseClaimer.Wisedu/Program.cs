@@ -2,6 +2,7 @@
 using CourseClaimer.Wisedu.Components;
 using CourseClaimer.Wisedu.Shared.Handlers;
 using CourseClaimer.Wisedu.Shared.Services;
+using CourseClaimer.Wisedu.Shared.Jobs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Savorboard.CAP.InMemoryMessageQueue;
@@ -9,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +106,16 @@ builder.Services.AddOpenTelemetry()
         tracing.AddHttpClientInstrumentation();
     });
 
+builder.Services.AddQuartz(q =>
+{
+    q.ScheduleJob<ReconnectJob>(trigger =>
+    {
+        trigger.WithIdentity(new TriggerKey("trigger1", "group1"))
+            //.WithSimpleSchedule(x => x.WithIntervalInSeconds(1200).RepeatForever())
+            .WithCronSchedule("0 18/20 * * * ? ")
+            .WithDescription("ReconnectJob");
+    });
+});
 
 builder.Services.AddTransient<MapForwarderHandler>();
 builder.Services.AddSingleton<OcrService>();
@@ -112,6 +124,10 @@ builder.Services.AddSingleton<ClaimService>();
 builder.Services.AddSingleton<EntityManagementService>();
 builder.Services.AddSingleton<CapClaimService>();
 builder.Services.AddHostedService<EntityManagementService>();
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 
 var app = builder.Build();
 

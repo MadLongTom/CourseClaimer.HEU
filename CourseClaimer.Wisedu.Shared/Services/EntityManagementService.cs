@@ -94,6 +94,18 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
+        public async Task<QueryDto<JobRecord>> QueryJob(int page, int pageSize)
+        {
+            var query = dbContext.JobRecords.AsQueryable();
+            var total = await query.CountAsync();
+            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return new QueryDto<JobRecord>
+            {
+                Total = total,
+                Data = data
+            };
+        }
+
         public async Task<QueryDto<ClaimRecord>> QueryRecord(int page, int pageSize)
         {
             var query = dbContext.ClaimRecords.AsQueryable();

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseClaimer.Wisedu.Entity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseClaimer.Wisedu.EntityFramework.SQLite", "CourseClaimer.Wisedu.EntityFramework.SQLite\CourseClaimer.Wisedu.EntityFramework.SQLite.csproj", "{59B60D9D-B7DE-40FB-AE04-E0690731BAE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseClaimer.Wisedu.EntityFramework.SQLServer", "CourseClaimer.Wisedu.EntityFramework.SQLServer\CourseClaimer.Wisedu.EntityFramework.SQLServer.csproj", "{A6781FC5-9446-41E2-99F6-598C2D1175E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseClaimer.Wisedu.EntityFramework.SQLServer", "CourseClaimer.Wisedu.EntityFramework.SQLServer\CourseClaimer.Wisedu.EntityFramework.SQLServer.csproj", "{A6781FC5-9446-41E2-99F6-598C2D1175E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

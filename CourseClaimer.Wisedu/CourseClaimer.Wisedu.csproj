@@ -48,6 +48,9 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
+    <PackageReference Include="Quartz" Version="3.11.0" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.11.0" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.11.0" />
     <PackageReference Include="Savorboard.CAP.InMemoryMessageQueue" Version="8.2.0" />
   </ItemGroup>
 

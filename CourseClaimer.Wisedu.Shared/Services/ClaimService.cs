@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using CourseClaimer.Wisedu.Shared.Dto;
 using CourseClaimer.Wisedu.Shared.Enums;
 using CourseClaimer.Wisedu.Shared.Extensions;
@@ -23,7 +24,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
         {
             var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             var customer = await dbContext.Customers.FirstAsync(c => c.UserName == entity.username);
-            customer.IsFinished = true;
+            dbContext.Customers.Remove(customer);
+            dbContext.EntityRecords.Add(new EntityRecord()
+            {
+                UserName = entity.username,
+                Message = "MakeUserFinished: User has claimed 5 courses or subscription is null"
+            });
             await dbContext.SaveChangesAsync();
         }
 
@@ -108,15 +114,70 @@ namespace CourseClaimer.Wisedu.Shared.Services
             foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.KCH != r.KCH)))
             {
                 ProgramExtensions.AllRows.Add(new() { KCH = row.KCH, KCM = row.KCM, XGXKLB = row.XGXKLB });
-                await capBus.PublishAsync("ClaimService.RowAdded", row);
             }
+
+            entity.SubscribedRows.AddRange(res.Data.data.rows.Where(row =>
+                (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))) &&
+                (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB))).Select(row => row.KCH));
+           
             entity.Secrets.AddRange(res.Data.data.rows.Select(row => new RowSecretDto
             {
                 KCH = row.KCH,
                 secretVal = row.secretVal,
                 classId = row.JXBID
             }));
+
+            var claimedRows = await GetClaimedRows(entity);
+
+            entity.SubscribedRows.RemoveAll(claimedRows.Contains);
+
+            if (claimedRows.Count >= 5 || entity.SubscribedRows.Count == 0)
+            {
+                await MakeUserFinished(entity);
+                entity.finished = true;
+                return [];
+            }
+
             return res.IsSuccess ? res.Data.data.rows.ToList() : [];
+        }
+
+        public async Task<List<string>> GetClaimedRows(Entity entity)
+        {
+            var res = await entity.ValidateClaim().ToResponseDto<SelectRoot>();
+            if (res.Exception != null)
+            {
+                await LogEntityRecord(entity,
+                    $@"Validate: {entity.username}: Unexpected Result: {res.Exception.Message}{Environment.NewLine}{res.RawResponse}");
+            }
+            if (res.IsSuccess)
+            {
+                var KCHList = res.Data.data.Select(c => c.KCH);
+                var KCMList = res.Data.data.Select(c => c.KCM);
+                var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
+                foreach (var KCM in KCMList)
+                {
+                   var row= await dbContext.ClaimRecords
+                       .Where(c => c.UserName == entity.username)
+                       .Where(c => c.IsSuccess == false)
+                       .FirstOrDefaultAsync(c => c.Course.Contains(KCM));
+                   if (row != null)
+                   {
+                       row.IsSuccess = true;
+                   }
+                }
+                foreach (var row in dbContext.ClaimRecords
+                             .Where(c => c.UserName == entity.username)
+                             .Where(c => c.IsSuccess == true))
+                {
+                    if (!KCMList.Any(k => row.Course.Contains(k)))
+                    {
+                        row.IsSuccess = false;
+                    }
+                }
+                await dbContext.SaveChangesAsync();
+                return KCHList.ToList();
+            }
+            return [];
         }
 
         public async Task<AddResult> Add(Entity entity, Row @class)
@@ -154,7 +215,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task<ValidateResult> ValidateClaim(Entity entity, Row @class)
         {
-            var res = await entity.ValidateClaim(@class).ToResponseDto<SelectRoot>();
+            var res = await entity.ValidateClaim().ToResponseDto<SelectRoot>();
             if (res.Exception != null)
             {
                 await LogEntityRecord(entity,
