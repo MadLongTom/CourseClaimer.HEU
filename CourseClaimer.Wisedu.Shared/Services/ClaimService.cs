@@ -156,14 +156,18 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
                 foreach (var KCM in KCMList)
                 {
-                   var row= await dbContext.ClaimRecords
-                       .Where(c => c.UserName == entity.username)
-                       .Where(c => c.IsSuccess == false)
-                       .FirstOrDefaultAsync(c => c.Course.Contains(KCM));
-                   if (row != null)
-                   {
-                       row.IsSuccess = true;
-                   }
+                    if (!dbContext.ClaimRecords
+                            .Where(c => c.UserName == entity.username).Any(c => c.IsSuccess == true))
+                    {
+                        var row = res.Data.data.First(c => c.KCM == KCM);
+                        dbContext.ClaimRecords.Add(new ClaimRecord()
+                        {
+                            Course = $"{row.KCM}|{row.XGXKLB}",
+                            UserName = entity.username,
+                            IsSuccess = true
+                        });
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
                 foreach (var row in dbContext.ClaimRecords
                              .Where(c => c.UserName == entity.username)
