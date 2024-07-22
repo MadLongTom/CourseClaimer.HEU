@@ -60,7 +60,8 @@ namespace CourseClaimer.Wisedu.Shared.Services
             {
                 IsSuccess = success,
                 UserName = entity.username,
-                Course = $"{@class.KCM}|{@class.XGXKLB}",
+                Course = @class.KCM,
+                Category = @class.XGXKLB
             });
             await dbContext.SaveChangesAsync();
         }
@@ -173,7 +174,8 @@ namespace CourseClaimer.Wisedu.Shared.Services
                         var row = res.Data.data.First(c => c.KCM == KCM);
                         dbContext.ClaimRecords.Add(new ClaimRecord()
                         {
-                            Course = $"{row.KCM}|{row.XGXKLB}",
+                            Category = row.XGXKLB,
+                            Course = row.KCM,
                             UserName = entity.username,
                             IsSuccess = true
                         });

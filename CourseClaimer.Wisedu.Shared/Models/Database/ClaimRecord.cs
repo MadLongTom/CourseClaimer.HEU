@@ -15,8 +15,8 @@ namespace CourseClaimer.Wisedu.Shared.Models.Database
         public DateTime ClaimTime { get; set; } = DateTime.Now;
         [DisplayName("课程名")]
         public string Course { get; set; }
-        [DisplayName("类别")]
-        public string Category { get; set; }
+        [DisplayName("类别")] 
+        public string Category { get; set; } = string.Empty;
         [DisplayName("是否成功")]
         public bool IsSuccess { get; set; }
         [DisplayName("代理商")]
