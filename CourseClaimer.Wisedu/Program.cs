@@ -112,8 +112,11 @@ builder.Services.AddQuartz(q =>
     {
         trigger.WithIdentity(new TriggerKey("trigger1", "group1"))
             //.WithSimpleSchedule(x => x.WithIntervalInSeconds(1200).RepeatForever())
-            .WithCronSchedule("0 18/20 * * * ? ")
             .WithDescription("ReconnectJob");
+        if (builder.Configuration["UseQuartz"] == "true")
+        {
+            trigger.WithCronSchedule(builder.Configuration["CronSchedule"]);
+        }
     });
 });
 

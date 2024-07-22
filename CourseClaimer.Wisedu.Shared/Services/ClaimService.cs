@@ -67,7 +67,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task<List<Row>> GetAvailableList(Entity entity)
         {
-            var res = await entity.GetRowList().ToResponseDto<ListRoot>();
+            var res = await entity.GetRowList(true).ToResponseDto<ListRoot>();
             if (res.Exception != null)
             {
                 await LogEntityRecord(entity,

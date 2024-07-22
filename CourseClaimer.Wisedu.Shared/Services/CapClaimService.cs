@@ -26,10 +26,6 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task StartAsync(Entity entity, CancellationToken token = default)
         {
-            entity.SubscribedRows.AddRange(ProgramExtensions.AllRows.Where(row =>
-                    (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))) &&
-                    (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB)))
-                .Select(r => r.KCH));
             await claimService.GetAllList(entity);
             while (!token.IsCancellationRequested)
             {

@@ -14,7 +14,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
         public static HttpRequestMessage BuildPostRequest(string url, Entity entity, MediaTypeHeaderValue? contentType, HttpContent content)
         {
             HttpRequestMessage hrt = new(HttpMethod.Post, url);
-            hrt.Headers.Referrer = new(Path.Combine(entity.client.BaseAddress.AbsoluteUri,$"xsxk/elective/grablessons?batchId={entity.batchId}"));
+            hrt.Headers.Referrer = new(Path.Combine(entity.client.BaseAddress.AbsoluteUri, $"xsxk/elective/grablessons?batchId={entity.batchId}"));
             hrt.Headers.Host = entity.client.BaseAddress.Host;
             hrt.Content = content;
             if (contentType != null) hrt.Content.Headers.ContentType = contentType;
@@ -27,7 +27,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
                 await Task.Delay(Convert.ToInt32(requiredMillSeconds - sw.ElapsedMilliseconds));
             }
         }
-        public static async Task<HttpResponseMessage> LimitSendAsync(this HttpClient client, HttpRequestMessage hrm, Entity entity,bool IsAdd = false)
+        public static async Task<HttpResponseMessage> LimitSendAsync(this HttpClient client, HttpRequestMessage hrm, Entity entity, bool IsAdd = false)
         {
             await DelayTillLimit(entity.stopwatch, IsAdd ? LimitAddMillSeconds : LimitListMillSeconds);
             entity.stopwatch.Restart();
@@ -70,13 +70,22 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
             //{ "teachingClassType" , "TJKC" }
         };
 
-        public static async Task<HttpResponseMessage> GetRowList(this Entity entity)
+        public static readonly Dictionary<string, object> listDataAll = new()
+        {
+            { "campus", "01" },
+            { "orderBy", "" },
+            { "pageNumber",1 },
+            { "pageSize" , 450 },
+            { "teachingClassType" , "XGKC" }
+        };
+
+        public static async Task<HttpResponseMessage> GetRowList(this Entity entity, bool SFCT = false)
         {
             while (entity.IsAddPending)
             {
                 await Task.Delay(LimitListMillSeconds);
             }
-            var content = JsonContent.Create(listData);
+            var content = JsonContent.Create(SFCT? listDataAll : listData);
             content.Headers.ContentType = new("application/json")
             {
                 CharSet = "UTF-8"
@@ -101,7 +110,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
                 //{ "chooseVolunteer", "1" }  //正选不传
             };
             HttpRequestMessage hrt = BuildPostRequest(addUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(addData));
-            var addResponse = await entity.client.LimitSendAsync(hrt, entity,true);
+            var addResponse = await entity.client.LimitSendAsync(hrt, entity, true);
             return addResponse;
         }
 
@@ -114,7 +123,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
         public static async Task<HttpResponseMessage> ValidateClaim(this Entity entity)
         {
             HttpRequestMessage hrt = BuildPostRequest(selectUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(selectData));
-            var selectResponse = await entity.client.LimitSendAsync(hrt, entity,true);
+            var selectResponse = await entity.client.LimitSendAsync(hrt, entity, true);
             return selectResponse;
         }
 
