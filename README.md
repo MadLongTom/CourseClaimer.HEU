@@ -2,6 +2,47 @@
 
 Auto course claiming for Wisedu sites.
 
+## Annotations
+
+![image](https://github.com/user-attachments/assets/9c51eaeb-f426-4f00-aa3a-a23e7311cd33)
+
+## OpenTelemetry
+
+Use **<code>Prometheus</code>** to manage tracing and metrics, modify <code>prometheus.yml</code>
+
+```yml
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["IP:Port"]
+
+```
+
 ## Configuration
 
 In <code>appsettings.json</code>, edit your hostadresss, login port and database provider.
@@ -12,6 +53,7 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
   "AuthPath": "https://jwxk.hrbeu.edu.cn/xsxk/auth/login",
   "DBProvider": "SQLite",
   "DBProvider_CAP": "InMemory",
+  "ReLoginDelayMilliseconds": 300000,
 }
 ```
 
@@ -32,6 +74,20 @@ speed limitation can be modified in <code>Shared.Extensions.EntityExtensions.cs<
 private const int LimitListMillSeconds = 400;
 private const int LimitAddMillSeconds = 250;
 ```
+
+## Docker
+
+A ubuntu docker img with dotnet 8 sdk and opencv
+
+for running this interestring software in linux docker
+
+using docker build -t heujwxk . in cli to build docker img
+
+and then use docker-compose up -d to start the project
+
+the data will be saved in the db as the compose goes.
+
+the docker-compose.yml just give a example, though it could be run.
 
 ## Usage
 
