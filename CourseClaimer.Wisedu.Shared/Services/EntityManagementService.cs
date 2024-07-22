@@ -31,6 +31,13 @@ namespace CourseClaimer.Wisedu.Shared.Services
             return (JsonSerializer.Serialize(customers), path);
         }
 
+        public async Task<string> ExportAllClaims()
+        {
+            var claims = await dbContext.ClaimRecords.AsNoTracking().Where(c => c.IsSuccess == true)
+                .OrderBy(x => x.UserName).ThenBy(x => x.ClaimTime).ToListAsync();
+            return JsonSerializer.Serialize(claims);
+        }
+
         public async Task AddCustomersFromJson(string json)
         {
             var customers = JsonSerializer.Deserialize<List<Customer>>(json);

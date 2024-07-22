@@ -24,19 +24,6 @@ namespace CourseClaimer.Wisedu.Shared.Services
             }
         }
 
-        [CapSubscribe("ClaimService.RowAdded")]
-        public async Task CapAddRow(Row row)
-        {
-            foreach (var entity in ProgramExtensions.Entities.Where(entity =>
-                         (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))) &&
-                         (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB)))
-                         .OrderByDescending(e => e.priority))
-            {
-                entity.SubscribedRows.Add(row.KCH);
-                logger.LogInformation($"CapAddRow:{entity.username} added course {row.KCM}");
-            }
-        }
-
         public async Task StartAsync(Entity entity, CancellationToken token = default)
         {
             entity.SubscribedRows.AddRange(ProgramExtensions.AllRows.Where(row =>
