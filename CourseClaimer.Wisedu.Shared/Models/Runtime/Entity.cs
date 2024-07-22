@@ -6,7 +6,7 @@ using CourseClaimer.Wisedu.Shared.Models.JWXK;
 
 namespace CourseClaimer.Wisedu.Shared.Models.Runtime;
 
-public record Entity(string username, string password, List<string> category, List<string> courses, List<Row> done, bool finished, string? batchId)
+public record Entity(string username, string password, List<string> category, List<string> courses, List<Row> done, bool finished, string? batchId,int priority)
 {
     public bool IsAddPending { get; set; } = false;
     public HttpClient client { get; set; }
@@ -15,4 +15,5 @@ public record Entity(string username, string password, List<string> category, Li
     public Stopwatch stopwatch = Stopwatch.StartNew();
     public bool finished { get; set; } = finished;
     public string? batchId { get; set; } = batchId;
+    public int priority { get; set; } = priority;
 };

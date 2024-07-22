@@ -19,5 +19,7 @@ namespace CourseClaimer.Wisedu.Shared.Models.Database
         public string Course { get; set; } = string.Empty;
         [DisplayName("是否完成")]
         public bool IsFinished { get; set; }
+        [DisplayName("优先级（越大越前）")] 
+        public int Priority { get; set; } = 0;
     }
 }

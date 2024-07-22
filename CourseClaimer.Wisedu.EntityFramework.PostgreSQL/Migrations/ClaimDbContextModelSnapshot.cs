@@ -68,6 +68,9 @@ namespace CourseClaimer.Wisedu.EntityFramework.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");

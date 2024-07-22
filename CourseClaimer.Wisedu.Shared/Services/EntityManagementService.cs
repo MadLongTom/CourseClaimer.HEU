@@ -145,7 +145,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                         customer.Categories == string.Empty
                             ? []
                             : customer.Categories.Split(',').Select(p => xgxklbs[p]).ToList(),
-                        customer.Course == string.Empty ? [] : [.. customer.Course.Split(',')], [], false, null);
+                        customer.Course == string.Empty ? [] : [.. customer.Course.Split(',')], [], false, null,customer.Priority);
                     ProgramExtensions.Entities.Add(entity);
                     var cts = new CancellationTokenSource();
                     LoginResult loginResult;
@@ -190,7 +190,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task WebStartAsync(CancellationToken cancellationToken = default)
         {
-            var customers = await dbContext.Customers.ToListAsync(cancellationToken);
+            var customers = await dbContext.Customers.OrderByDescending(c => c.Priority).ToListAsync(cancellationToken);
             foreach (var customer in customers)
             {
                 customer.IsFinished = false;
