@@ -59,7 +59,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
         public static readonly string listUrl = "xsxk/elective/clazz/list";
         public static readonly Dictionary<string, object> listData = new()
         {
-            //{ "SFCT", "0" },
+            { "SFCT", "0" },
             //{ "XGXKLB",xgxklb["F"] },
             //{ "KEY","网络" },
             { "campus", "01" },
