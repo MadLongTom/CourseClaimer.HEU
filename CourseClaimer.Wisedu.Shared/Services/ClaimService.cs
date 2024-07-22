@@ -90,7 +90,8 @@ namespace CourseClaimer.Wisedu.Shared.Services
             foreach (var row in availableRows)
             {
                 await capBus.PublishAsync("ClaimService.RowAvailable", row);
-                var secret = entity.Secrets.Find(s => s.KCH == row.KCH);
+                var secret = entity.Secrets.FirstOrDefault(s => s.KCH == row.KCH);
+                if(secret == null) continue;
                 if (secret.secretVal != row.secretVal)
                 {
                     secret.secretVal = row.secretVal;
