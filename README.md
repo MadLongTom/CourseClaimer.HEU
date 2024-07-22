@@ -81,9 +81,9 @@ A ubuntu docker img with dotnet 8 sdk and opencv
 
 for running this interestring software in linux docker
 
-using docker build -t heujwxk . in cli to build docker img
+using <code>docker build -t heujwxk .</code> in cli to build docker img
 
-and then use docker-compose up -d to start the project
+and then use <code>docker-compose up -d</code> to start the project
 
 the data will be saved in the db as the compose goes.
 
