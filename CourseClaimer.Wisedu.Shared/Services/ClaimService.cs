@@ -8,6 +8,7 @@ using CourseClaimer.Wisedu.Shared.Models.JWXK.Roots;
 using CourseClaimer.Wisedu.Shared.Models.Runtime;
 using DotNetCore.CAP;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Row = CourseClaimer.Wisedu.Shared.Models.JWXK.Row;
@@ -18,6 +19,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
         ILogger<ClaimService> logger,
         AuthorizeService authorizeService,
         IServiceProvider serviceProvider,
+        IConfiguration configuration,
         ICapPublisher capBus)
     {
         public async Task MakeUserFinished(Entity entity)
@@ -55,6 +57,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task LogClaimRecord(Entity entity, Row @class, bool success)
         {
+            if (!success && Convert.ToBoolean(configuration["LegacyMode"])) return;
             var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             var customer = dbContext.Customers.AsNoTracking().FirstOrDefault(c => c.UserName == entity.username);
             dbContext.ClaimRecords.Add(new ClaimRecord()
