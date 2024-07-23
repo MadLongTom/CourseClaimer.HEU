@@ -28,14 +28,17 @@ namespace CourseClaimer.Wisedu.Shared.Jobs
                 Message = "启动所有",
             });
             await dbContext.SaveChangesAsync();
-            await Task.Delay(Convert.ToInt32(configuration["QuartzDelayMilliseconds"]));
-            await EMS.StopAsync();
-            dbContext.JobRecords.Add(new JobRecord()
+            if(!Convert.ToBoolean(configuration["LegacyMode"]))
             {
-                JobName = "ReconnectJob",
-                Message = "结束执行，关闭所有",
-            });
-            await dbContext.SaveChangesAsync();
+                await Task.Delay(Convert.ToInt32(configuration["QuartzDelayMilliseconds"]));
+                await EMS.StopAsync();
+                dbContext.JobRecords.Add(new JobRecord()
+                {
+                    JobName = "ReconnectJob",
+                    Message = "结束执行，关闭所有",
+                });
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 }
