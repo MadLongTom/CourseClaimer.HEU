@@ -35,7 +35,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task LogEntityRecord(Entity entity, string message)
         {
-            logger.LogWarning($"Possibly overspeeding!{Environment.NewLine}{message}");
+            logger.LogWarning($"Possibly confront anti-peek-shaving!{Environment.NewLine}{message}");
             var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
             dbContext.EntityRecords.Add(new EntityRecord()
             {
@@ -56,12 +56,15 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task LogClaimRecord(Entity entity, Row @class, bool success)
         {
             var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
+            var customer = dbContext.Customers.AsNoTracking().FirstOrDefault(c => c.UserName == entity.username);
             dbContext.ClaimRecords.Add(new ClaimRecord()
             {
                 IsSuccess = success,
                 UserName = entity.username,
                 Course = @class.KCM,
-                Category = @class.XGXKLB
+                Category = @class.XGXKLB,
+                Tenant = customer?.Tenant ?? string.Empty,
+                Contact = customer?.Contact ?? string.Empty,
             });
             await dbContext.SaveChangesAsync();
         }
@@ -172,12 +175,15 @@ namespace CourseClaimer.Wisedu.Shared.Services
                             .Any(c => c.IsSuccess == true))
                     {
                         var row = res.Data.data.First(c => c.KCM == KCM);
+                        var customer = dbContext.Customers.AsNoTracking().FirstOrDefault(c => c.UserName == entity.username);
                         dbContext.ClaimRecords.Add(new ClaimRecord()
                         {
                             Category = row.XGXKLB,
                             Course = row.KCM,
                             UserName = entity.username,
-                            IsSuccess = true
+                            IsSuccess = true,
+                            Tenant = customer?.Tenant ?? string.Empty,
+                            Contact = customer?.Contact ?? string.Empty,
                         });
                         await dbContext.SaveChangesAsync();
                     }
