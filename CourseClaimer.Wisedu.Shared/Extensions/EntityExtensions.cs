@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using CourseClaimer.Wisedu.Shared.Dto;
 using CourseClaimer.Wisedu.Shared.Models.JWXK;
 using CourseClaimer.Wisedu.Shared.Models.Runtime;
 
@@ -99,6 +100,22 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
         static readonly string addUrl = "xsxk/elective/clazz/add";
 
         public static async Task<HttpResponseMessage> Add(this Entity entity, Row @class)
+        {
+            var secret = entity.Secrets.FirstOrDefault(s => s.KCH == @class.KCH);
+            if (secret == null) throw new Exception("Secret not found");
+            var addData = new Dictionary<string, string>
+            {
+                { "clazzType", "XGKC" },
+                { "clazzId",secret.classId },
+                { "secretVal",secret.secretVal },
+                //{ "chooseVolunteer", "1" }  //正选不传
+            };
+            HttpRequestMessage hrt = BuildPostRequest(addUrl, entity, new("application/x-www-form-urlencoded"), new FormUrlEncodedContent(addData));
+            var addResponse = await entity.client.LimitSendAsync(hrt, entity, true);
+            return addResponse;
+        }
+
+        public static async Task<HttpResponseMessage> Add(this Entity entity, RowSecretDto @class)
         {
             var secret = entity.Secrets.FirstOrDefault(s => s.KCH == @class.KCH);
             if (secret == null) throw new Exception("Secret not found");

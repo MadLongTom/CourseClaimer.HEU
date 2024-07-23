@@ -320,5 +320,6 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 break;
             }
         }
+
     }
 }

@@ -40,8 +40,8 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.SaveChangesAsync();
             if (IsReLogin) await Task.Delay(Convert.ToInt32(configuration["ReLoginDelayMilliseconds"]));
             entity.finished = false;
-            //entity.client = clientFactory.CreateClient("JWXK");
-            entity.client = BuildClient();
+            entity.client = clientFactory.CreateClient("JWXK");
+            //entity.client = BuildClient();
             var captcha = await entity.Captcha().ToResponseDto<CaptchaRoot>();
             captcha.EnsureSuccess();
             var authCode = ocr.classification(img_base64: captcha!.Data.data.captcha.Split(',')[1]);

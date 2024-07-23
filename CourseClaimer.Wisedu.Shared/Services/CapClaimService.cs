@@ -26,10 +26,23 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task StartAsync(Entity entity, CancellationToken token = default)
         {
-            await claimService.GetAllList(entity);
-            while (!token.IsCancellationRequested)
+            var thisRows = await claimService.GetAllList(entity);
+            if (Convert.ToBoolean(configuration["LegacyMode"]))
             {
-                await claimService.GetAvailableList(entity);
+                while(!token.IsCancellationRequested)
+                {
+                    foreach (var row in entity.SubscribedRows)
+                    {
+                        await claimService.Claim(entity, thisRows.Find(r => r.KCH == row));
+                    }
+                }
+            }
+            else
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await claimService.GetAvailableList(entity);
+                }
             }
         }
     }
