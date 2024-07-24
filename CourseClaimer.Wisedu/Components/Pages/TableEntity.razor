@@ -17,7 +17,7 @@
 {
     public async Task<QueryData<EntityRecord>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryEntity(options);
+        var customers = await EMS.Query<EntityRecord>(options);
         return new QueryData<EntityRecord>
         {
             Items = customers.Data,

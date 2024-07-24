@@ -37,7 +37,7 @@
     }
     public async Task<QueryData<ClaimRecord>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryRecord(options);
+        var customers = await EMS.Query<ClaimRecord>(options);
         return new QueryData<ClaimRecord>
         {
             Items = customers.Data,

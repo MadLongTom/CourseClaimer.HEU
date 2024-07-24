@@ -65,7 +65,7 @@
 
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryUser(options);
+        var customers = await EMS.Query<Customer>(options);
         return new QueryData<Customer>
             {
                 Items = customers.Data,

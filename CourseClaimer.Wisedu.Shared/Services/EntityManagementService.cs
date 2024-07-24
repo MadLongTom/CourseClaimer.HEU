@@ -74,6 +74,18 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.SaveChangesAsync();
         }
 
+        public async Task <QueryDto<T>> Query<T>(QueryPageOptions options) where T : class
+        {
+            var query = dbContext.Set<T>().AsQueryable().Where(options.GetSearchFilter<T>(FilterLogic.Or));
+            var total = query.Count();
+            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
+            return new QueryDto<T>
+            {
+                Total = total,
+                Data = data
+            };
+        }
+
         public async Task <QueryDto<RowDto>> QueryRow(QueryPageOptions options)
         {
             var query = ProgramExtensions.AllRows.Where(options.GetSearchFilter<RowDto>(FilterLogic.Or));
@@ -84,69 +96,16 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task<QueryDto<Customer>> QueryUser(QueryPageOptions options)
-        {
-            var query = dbContext.Customers.AsQueryable().Where(options.GetSearchFilter<Customer>(FilterLogic.Or));
-            var total = query.Count();
-            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
-            return new QueryDto<Customer>
-            {
-                Total = total,
-                Data = data
-            };
-        }
-
-        public async Task<QueryDto<JobRecord>> QueryJob(QueryPageOptions options)
-        {
-            var query = dbContext.JobRecords.AsQueryable().Where(options.GetSearchFilter<JobRecord>(FilterLogic.Or));
-            var total = query.Count();
-            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
-            return new QueryDto<JobRecord>
-            {
-                Total = total,
-                Data = data
-            };
-        }
-
-        public async Task<QueryDto<ClaimRecord>> QueryRecord(QueryPageOptions options)
-        {
-            var query = dbContext.ClaimRecords.AsQueryable().Where(options.GetSearchFilter<ClaimRecord>(FilterLogic.Or));
-            var total =  query.Count();
-            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
-            return new QueryDto<ClaimRecord>
-            {
-                Total = total,
-                Data = data
-            };
-        }
-
-        public async Task<QueryDto<EntityRecord>> QueryEntity(QueryPageOptions options)
-        {
-            var query = dbContext.EntityRecords.AsQueryable().Where(options.GetSearchFilter<EntityRecord>(FilterLogic.Or));
-            var total = query.Count();
-            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
-            return new QueryDto<EntityRecord>
-            {
-                Total = total,
-                Data = data
-            };
-        }
-
         public async Task EditCustomer(Customer customer)
         {
             var local = dbContext.Set<Customer>()
                 .Local
                 .FirstOrDefault(entry => entry.Id.Equals(customer.Id));
-
-            // Check if local is not null 
             if (local != null)
             {
-                // Detach
                 dbContext.Entry(local).State = EntityState.Detached;
             }
-            // Set Modified state
             dbContext.Entry(customer).State = EntityState.Modified;
-
             await dbContext.SaveChangesAsync();
             await RefreshCustomerStatus(customer);
         }
