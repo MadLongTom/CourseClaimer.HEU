@@ -75,6 +75,9 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
 | LegacyMode               | bool: Use Add or MQ based List?                                                                         |
 | PGSQL                    | string: connectionstring of ClaimDbContext (DBProvider=PostgreSQL)                                      |
 | PGSQL_CAP                | string: connectionstring of MessageBus (DBProvider_CAP=PostgreSQL)                                      |
+| GlobalExceptionList      | string: courses written in there will be discarded globally                                             |
+| LimitListMillSeconds     | int: minimum delay of List API                                                                          |
+| LimitAddMillSeconds      | int: minimum delay of Add API                                                                           |
 
 And configure the AesKey
 
