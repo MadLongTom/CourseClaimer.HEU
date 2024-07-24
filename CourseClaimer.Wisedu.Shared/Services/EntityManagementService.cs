@@ -76,20 +76,19 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task <QueryDto<RowDto>> QueryRow(QueryPageOptions options)
         {
+            var query = ProgramExtensions.AllRows.Where(options.GetSearchFilter<RowDto>(FilterLogic.Or));
             return new QueryDto<RowDto>
             {
-                Total = ProgramExtensions.AllRows.Count,
-                Data = ProgramExtensions.AllRows.Where(options.GetSearchFilter<RowDto>(FilterLogic.Or))
-                    .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList()
+                Total = query.Count(),
+                Data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList()
             };
         }
 
         public async Task<QueryDto<Customer>> QueryUser(QueryPageOptions options)
         {
-            var query = dbContext.Customers.AsQueryable();
-            var total = await query.CountAsync();
-            var data = query.Where(options.GetSearchFilter<Customer>(FilterLogic.Or))
-                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
+            var query = dbContext.Customers.AsQueryable().Where(options.GetSearchFilter<Customer>(FilterLogic.Or));
+            var total = query.Count();
+            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<Customer>
             {
                 Total = total,
@@ -99,10 +98,9 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task<QueryDto<JobRecord>> QueryJob(QueryPageOptions options)
         {
-            var query = dbContext.JobRecords.AsQueryable();
-            var total = await query.CountAsync();
-            var data = query.Where(options.GetSearchFilter<JobRecord>(FilterLogic.Or))
-                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
+            var query = dbContext.JobRecords.AsQueryable().Where(options.GetSearchFilter<JobRecord>(FilterLogic.Or));
+            var total = query.Count();
+            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<JobRecord>
             {
                 Total = total,
@@ -112,10 +110,9 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task<QueryDto<ClaimRecord>> QueryRecord(QueryPageOptions options)
         {
-            var query = dbContext.ClaimRecords.AsQueryable();
-            var total = await query.CountAsync();
-            var data = query.Where(options.GetSearchFilter<ClaimRecord>(FilterLogic.Or))
-                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
+            var query = dbContext.ClaimRecords.AsQueryable().Where(options.GetSearchFilter<ClaimRecord>(FilterLogic.Or));
+            var total =  query.Count();
+            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<ClaimRecord>
             {
                 Total = total,
@@ -125,10 +122,9 @@ namespace CourseClaimer.Wisedu.Shared.Services
 
         public async Task<QueryDto<EntityRecord>> QueryEntity(QueryPageOptions options)
         {
-            var query = dbContext.EntityRecords.AsQueryable();
-            var total = await query.CountAsync();
-            var data = query.Where(options.GetSearchFilter<EntityRecord>(FilterLogic.Or))
-                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
+            var query = dbContext.EntityRecords.AsQueryable().Where(options.GetSearchFilter<EntityRecord>(FilterLogic.Or));
+            var total = query.Count();
+            var data = query.Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<EntityRecord>
             {
                 Total = total,
