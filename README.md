@@ -2,7 +2,7 @@
 
 # CourseClaimer.Wisedu
 
-Auto course claiming for Wisedu sites.
+**CROSS PLATFORM** Auto course claiming software for Wisedu sites.
 
 [![Language](https://img.shields.io/github/languages/top/MadLongTom/CourseClaimer.Wisedu
 )](https://dotnet.microsoft.com/)
