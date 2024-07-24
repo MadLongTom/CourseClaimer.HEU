@@ -1,6 +1,16 @@
+<div align="center">
+
 # CourseClaimer.Wisedu
 
 Auto course claiming for Wisedu sites.
+
+[![Language](https://img.shields.io/github/languages/top/MadLongTom/CourseClaimer.Wisedu
+)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/github/license/MadLongTom/CourseClaimer.Wisedu.svg?logo=git&logoColor=red)](https://github.com/MadLongTom/CourseClaimer.Wisedu/blob/master/LICENSE.txt)
+[![Repo Size](https://img.shields.io/github/repo-size/MadLongTom/CourseClaimer.Wisedu.svg?logo=github&logoColor=green&label=repo)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
+[![Commit Date](https://img.shields.io/github/last-commit/MadLongTom/CourseClaimer.Wisedu/master.svg?logo=github&logoColor=green&label=commit)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
+
+</div>
 
 ## *Important Notice*
 
@@ -63,8 +73,8 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
 | CronSchedule             | string: Time expression for Quartz tasks                                                                |
 | UseQuartz                | bool: Use scheduled tasks                                                                               |
 | LegacyMode               | bool: Use Add or MQ based List?                                                                         |
-| PGSQL                    | string: connectionstring of ClaimDbContext                                                              |
-| PGSQL_CAP                | string: connectionstring of MessageBus                                                                  |
+| PGSQL                    | string: connectionstring of ClaimDbContext (DBProvider=PostgreSQL)                                      |
+| PGSQL_CAP                | string: connectionstring of MessageBus (DBProvider_CAP=PostgreSQL)                                      |
 
 And configure the AesKey
 
@@ -84,7 +94,21 @@ private const int LimitListMillSeconds = 400;
 private const int LimitAddMillSeconds = 250;
 ```
 
-## Docker
+## Build
+
+```shell
+cd ./CourseClaimer.Wisedu
+dotnet restore
+dotnet run
+```
+
+## Publish
+
+```shell
+dotnet publish
+```
+
+## Docker support
 
 A ubuntu docker img with dotnet 8 sdk and opencv
 
