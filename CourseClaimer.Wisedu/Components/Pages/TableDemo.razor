@@ -12,10 +12,11 @@
 <Divider/>
 <Table @ref="table" TItem="Customer" IsPagination="true" PageItemsSource="[20, 40, 100]" class="table-demo"
        IsStriped="true" IsBordered="true" ShowSkeleton="true" IsMultipleSelect="true"
-       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true" IsExtendButtonsInRowHeader="true"
+       ShowToolbar="true" ShowSearch="true" ShowExtendButtons="true" IsExtendButtonsInRowHeader="true" ShowTopPagination="true"
        AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync" OnDeleteAsync="OnDeleteAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Id" Ignore="true" />
+        <TableColumn @bind-Field="@context.UserName" Searchable="true"></TableColumn>
     </TableColumns>
 </Table>
 
@@ -64,7 +65,7 @@
 
     public async Task<QueryData<Customer>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryUser(options.PageIndex, options.PageItems);
+        var customers = await EMS.QueryUser(options);
         return new QueryData<Customer>
             {
                 Items = customers.Data,

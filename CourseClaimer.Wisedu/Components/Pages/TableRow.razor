@@ -13,7 +13,7 @@
 {
     public async Task<QueryData<RowDto>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryRow(options.PageIndex, options.PageItems);
+        var customers = await EMS.QueryRow(options);
         return new QueryData<RowDto>
         {
             Items = customers.Data,

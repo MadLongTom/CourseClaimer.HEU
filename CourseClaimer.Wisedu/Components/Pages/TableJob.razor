@@ -16,7 +16,7 @@
 {
     public async Task<QueryData<JobRecord>> OnQueryAsync(QueryPageOptions options)
     {
-        var customers = await EMS.QueryJob(options.PageIndex, options.PageItems);
+        var customers = await EMS.QueryJob(options);
         return new QueryData<JobRecord>
             {
                 Items = customers.Data,

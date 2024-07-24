@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text.Json;
+using BootstrapBlazor.Components;
 using CourseClaimer.Wisedu.Shared.Dto;
 using CourseClaimer.Wisedu.Shared.Enums;
 using CourseClaimer.Wisedu.Shared.Extensions;
@@ -7,6 +10,7 @@ using CourseClaimer.Wisedu.Shared.Models.Runtime;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CourseClaimer.Wisedu.Shared.Services
 {
@@ -70,20 +74,22 @@ namespace CourseClaimer.Wisedu.Shared.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task <QueryDto<RowDto>> QueryRow(int page, int pageSize)
+        public async Task <QueryDto<RowDto>> QueryRow(QueryPageOptions options)
         {
             return new QueryDto<RowDto>
             {
                 Total = ProgramExtensions.AllRows.Count,
-                Data = ProgramExtensions.AllRows.Skip((page - 1) * pageSize).Take(pageSize).ToList()
+                Data = ProgramExtensions.AllRows.Where(options.GetSearchFilter<RowDto>(FilterLogic.Or))
+                    .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList()
             };
         }
 
-        public async Task<QueryDto<Customer>> QueryUser(int page,int pageSize)
+        public async Task<QueryDto<Customer>> QueryUser(QueryPageOptions options)
         {
             var query = dbContext.Customers.AsQueryable();
             var total = await query.CountAsync();
-            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var data = query.Where(options.GetSearchFilter<Customer>(FilterLogic.Or))
+                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<Customer>
             {
                 Total = total,
@@ -91,11 +97,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task<QueryDto<JobRecord>> QueryJob(int page, int pageSize)
+        public async Task<QueryDto<JobRecord>> QueryJob(QueryPageOptions options)
         {
             var query = dbContext.JobRecords.AsQueryable();
             var total = await query.CountAsync();
-            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var data = query.Where(options.GetSearchFilter<JobRecord>(FilterLogic.Or))
+                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<JobRecord>
             {
                 Total = total,
@@ -103,11 +110,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task<QueryDto<ClaimRecord>> QueryRecord(int page, int pageSize)
+        public async Task<QueryDto<ClaimRecord>> QueryRecord(QueryPageOptions options)
         {
             var query = dbContext.ClaimRecords.AsQueryable();
             var total = await query.CountAsync();
-            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var data = query.Where(options.GetSearchFilter<ClaimRecord>(FilterLogic.Or))
+                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<ClaimRecord>
             {
                 Total = total,
@@ -115,11 +123,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
             };
         }
 
-        public async Task<QueryDto<EntityRecord>> QueryEntity(int page, int pageSize)
+        public async Task<QueryDto<EntityRecord>> QueryEntity(QueryPageOptions options)
         {
             var query = dbContext.EntityRecords.AsQueryable();
             var total = await query.CountAsync();
-            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var data = query.Where(options.GetSearchFilter<EntityRecord>(FilterLogic.Or))
+                .Skip((options.PageIndex - 1) * options.PageItems).Take(options.PageItems).ToList();
             return new QueryDto<EntityRecord>
             {
                 Total = total,
