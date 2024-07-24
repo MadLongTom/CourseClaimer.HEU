@@ -84,6 +84,20 @@ private const int LimitListMillSeconds = 400;
 private const int LimitAddMillSeconds = 250;
 ```
 
+## Build
+
+```shell
+cd ./CourseClaimer.Wisedu
+dotnet restore
+dotnet run
+```
+
+## publish
+
+```shell
+dotnet publish
+```
+
 ## Docker
 
 A ubuntu docker img with dotnet 8 sdk and opencv
