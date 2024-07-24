@@ -4,6 +4,8 @@
 
 Auto course claiming for Wisedu sites.
 
+[![Language](https://img.shields.io/github/languages/top/MadLongTom/CourseClaimer.Wisedu
+)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/github/license/MadLongTom/CourseClaimer.Wisedu.svg?logo=git&logoColor=red)](https://github.com/MadLongTom/CourseClaimer.Wisedu/blob/master/LICENSE.txt)
 [![Repo Size](https://img.shields.io/github/repo-size/MadLongTom/CourseClaimer.Wisedu.svg?logo=github&logoColor=green&label=repo)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
 [![Commit Date](https://img.shields.io/github/last-commit/MadLongTom/CourseClaimer.Wisedu/master.svg?logo=github&logoColor=green&label=commit)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
@@ -106,7 +108,7 @@ dotnet run
 dotnet publish
 ```
 
-## Docker
+## Docker support
 
 A ubuntu docker img with dotnet 8 sdk and opencv
 
