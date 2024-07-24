@@ -98,12 +98,12 @@ namespace CourseClaimer.Wisedu.Shared.Services
             {
                 await capBus.PublishAsync("ClaimService.RowAvailable", row);
                 logger.LogInformation($"GetAvailableList:{entity.username} found available courses: {row.KCM}");
-                var secret = entity.Secrets.FirstOrDefault(s => s.KCH == row.KCH);
+                var secret = entity.Secrets.FirstOrDefault(s => s.JXBID == row.JXBID);
                 if (secret == null)
                 {
                     entity.Secrets.Add(new RowSecretDto
                     {
-                        KCH = row.KCH,
+                        JXBID = row.JXBID,
                         secretVal = row.secretVal,
                         classId = row.JXBID
                     });
@@ -136,18 +136,18 @@ namespace CourseClaimer.Wisedu.Shared.Services
             }
 
             if (!res.IsSuccess) return [];
-            foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.KCH != r.KCH)))
+            foreach (var row in res.Data.data.rows.Where(r => ProgramExtensions.AllRows.All(ar => ar.JXBID != r.JXBID)))
             {
-                ProgramExtensions.AllRows.Add(new() { KCH = row.KCH, KCM = row.KCM, XGXKLB = row.XGXKLB });
+                ProgramExtensions.AllRows.Add(new() { JXBID = row.JXBID, KCM = row.KCM, XGXKLB = row.XGXKLB });
             }
 
             entity.SubscribedRows.AddRange(res.Data.data.rows.Where(row =>
                 (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))) &&
-                (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB))).Select(row => row.KCH));
+                (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB))).Select(row => row.JXBID));
            
             entity.Secrets.AddRange(res.Data.data.rows.Select(row => new RowSecretDto
             {
-                KCH = row.KCH,
+                JXBID = row.JXBID,
                 secretVal = row.secretVal,
                 classId = row.JXBID
             }));
@@ -176,7 +176,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
             }
             if (res.IsSuccess)
             {
-                var KCHList = res.Data.data.Select(c => c.KCH);
+                var JXBIDList = res.Data.data.Select(c => c.JXBID);
                 var KCMList = res.Data.data.Select(c => c.KCM);
                 var dbContext = serviceProvider.GetRequiredService<ClaimDbContext>();
                 foreach (var KCM in KCMList)
@@ -210,7 +210,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                     }
                 }
                 await dbContext.SaveChangesAsync();
-                return KCHList.ToList();
+                return JXBIDList.ToList();
             }
             return [];
         }
@@ -259,7 +259,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
             }
             if (res.IsSuccess)
             {
-                return res.Data.data.Any(q => q.KCH == @class.KCH) ? ValidateResult.Success : ValidateResult.Miss;
+                return res.Data.data.Any(q => q.JXBID == @class.JXBID) ? ValidateResult.Success : ValidateResult.Miss;
             }
             return ValidateResult.UnknownError;
         }
@@ -306,7 +306,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                         return;
                     case AddResult.Conflict:
                         entity.IsAddPending = false;
-                        entity.SubscribedRows.Remove(@class.KCH);
+                        entity.SubscribedRows.Remove(@class.JXBID);
                         return;
                     case AddResult.AuthorizationExpired:
                         entity.IsAddPending = true;

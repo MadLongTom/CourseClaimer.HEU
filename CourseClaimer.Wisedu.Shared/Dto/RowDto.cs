@@ -5,8 +5,8 @@ namespace CourseClaimer.Wisedu.Shared.Dto
 {
     public class RowDto
     {
-        [DisplayName("课程号")]
-        public string KCH { get; set; }
+        [DisplayName("教学班ID")]
+        public string JXBID { get; set; }
         [DisplayName("课程名")]
         public string KCM { get; set; }
         [DisplayName("类别")]

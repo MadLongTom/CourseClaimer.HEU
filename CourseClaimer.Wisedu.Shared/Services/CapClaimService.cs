@@ -15,7 +15,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
         public async Task CapClaimRow(Row row)
         {
             foreach (var entity in ProgramExtensions.Entities.Where(entity =>
-                         entity.SubscribedRows.Contains(row.KCH) && !entity.IsAddPending)
+                         entity.SubscribedRows.Contains(row.JXBID) && !entity.IsAddPending)
                          .OrderByDescending(e => e.priority)
                          .Take(takeNum))
             {
@@ -33,7 +33,7 @@ namespace CourseClaimer.Wisedu.Shared.Services
                 {
                     foreach (var row in entity.SubscribedRows)
                     {
-                        await claimService.Claim(entity, thisRows.Find(r => r.KCH == row));
+                        await claimService.Claim(entity, thisRows.Find(r => r.JXBID == row));
                     }
                 }
             }

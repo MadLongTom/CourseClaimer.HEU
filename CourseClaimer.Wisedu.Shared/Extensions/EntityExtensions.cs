@@ -101,7 +101,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
 
         public static async Task<HttpResponseMessage> Add(this Entity entity, Row @class)
         {
-            var secret = entity.Secrets.FirstOrDefault(s => s.KCH == @class.KCH);
+            var secret = entity.Secrets.FirstOrDefault(s => s.JXBID == @class.JXBID);
             if (secret == null) throw new Exception("Secret not found");
             var addData = new Dictionary<string, string>
             {
@@ -117,7 +117,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
 
         public static async Task<HttpResponseMessage> Add(this Entity entity, RowSecretDto @class)
         {
-            var secret = entity.Secrets.FirstOrDefault(s => s.KCH == @class.KCH);
+            var secret = entity.Secrets.FirstOrDefault(s => s.JXBID == @class.JXBID);
             if (secret == null) throw new Exception("Secret not found");
             var addData = new Dictionary<string, string>
             {
