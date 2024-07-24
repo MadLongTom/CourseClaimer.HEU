@@ -63,8 +63,8 @@ In <code>appsettings.json</code>, edit your hostadresss, login port and database
 | CronSchedule             | string: Time expression for Quartz tasks                                                                |
 | UseQuartz                | bool: Use scheduled tasks                                                                               |
 | LegacyMode               | bool: Use Add or MQ based List?                                                                         |
-| PGSQL                    | string: connectionstring of ClaimDbContext                                                              |
-| PGSQL_CAP                | string: connectionstring of MessageBus                                                                  |
+| PGSQL                    | string: connectionstring of ClaimDbContext (DBProvider=PostgreSQL)                                      |
+| PGSQL_CAP                | string: connectionstring of MessageBus (DBProvider_CAP=PostgreSQL)                                      |
 
 And configure the AesKey
 
