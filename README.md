@@ -1,6 +1,14 @@
+<div align="center">
+
 # CourseClaimer.Wisedu
 
 Auto course claiming for Wisedu sites.
+
+[![License](https://img.shields.io/github/license/MadLongTom/CourseClaimer.Wisedu.svg?logo=git&logoColor=red)](https://github.com/MadLongTom/CourseClaimer.Wisedu/LICENSE)
+[![Repo Size](https://img.shields.io/github/repo-size/MadLongTom/CourseClaimer.Wisedu.svg?logo=github&logoColor=green&label=repo)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
+[![Commit Date](https://img.shields.io/github/last-commit/MadLongTom/CourseClaimer.Wisedu/master.svg?logo=github&logoColor=green&label=commit)](https://github.com/MadLongTom/CourseClaimer.Wisedu)
+
+</div>
 
 ## *Important Notice*
 
@@ -92,7 +100,7 @@ dotnet restore
 dotnet run
 ```
 
-## publish
+## Publish
 
 ```shell
 dotnet publish
