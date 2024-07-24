@@ -2,6 +2,10 @@
 
 Auto course claiming for Wisedu sites.
 
+## *Important Notice*
+
+Due to the traffic limitation of nginx and linux connection pool, if your account > 80, consider using **Legacy Mode** in <code>appsettings.json</code> 
+
 ## Annotations
 
 ![image](https://github.com/user-attachments/assets/9c51eaeb-f426-4f00-aa3a-a23e7311cd33)
