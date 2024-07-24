@@ -90,13 +90,6 @@ builder.Services.AddSingleton<Aes>(inst =>
 });
 ```
 
-speed limitation can be modified in <code>Shared.Extensions.EntityExtensions.cs</code>
-
-```csharp
-private const int LimitListMillSeconds = 400;
-private const int LimitAddMillSeconds = 250;
-```
-
 ## Build
 
 ```shell
