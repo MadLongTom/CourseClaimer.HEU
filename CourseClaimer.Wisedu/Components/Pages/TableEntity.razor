@@ -9,7 +9,7 @@
        AutoGenerateColumns="true" EditMode="EditMode.Popup" OnQueryAsync="OnQueryAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Id" Ignore="true" />
-        <TableColumn @bind-Field="@context.UserName" Searchable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.UserName" Searchable="true" DefaultSortOrder="SortOrder.Asc"></TableColumn>
     </TableColumns>
 </Table>
 
