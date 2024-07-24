@@ -142,8 +142,10 @@ namespace CourseClaimer.Wisedu.Shared.Services
             }
 
             entity.SubscribedRows.AddRange(res.Data.data.rows.Where(row =>
-                (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))) &&
-                (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB))).Select(row => row.JXBID));
+                (entity.courses.Count == 0 || entity.courses.Any(c => row.KCM.Contains(c))))
+                .Where(row => (entity.category.Count == 0 || entity.category.Any(c => c == row.XGXKLB)))
+                .Where(row => !ProgramExtensions.ExceptionList.Contains(row.KCM))
+                .Select(row => row.JXBID));
            
             entity.Secrets.AddRange(res.Data.data.rows.Select(row => new RowSecretDto
             {

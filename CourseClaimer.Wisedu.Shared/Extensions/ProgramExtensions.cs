@@ -10,6 +10,7 @@ namespace CourseClaimer.Wisedu.Shared.Extensions
     {
         public static List<RowDto> AllRows { get; set; } = [];
         public static List<Entity> Entities { get; set; } = [];
+        public static List<string> ExceptionList { get; set; } = [];
 
         public static Func<T, bool> GetSearchFilter<T>(this QueryPageOptions option, FilterLogic logic)
         {

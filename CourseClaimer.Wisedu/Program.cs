@@ -11,6 +11,7 @@ using System.Text;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Quartz;
+using CourseClaimer.Wisedu.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,5 +152,9 @@ app.UseAntiforgery();
 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+ProgramExtensions.ExceptionList = app.Configuration["GlobalExceptionList"]?.Split(',').ToList() ?? [];
+EntityExtensions.LimitAddMillSeconds = Convert.ToInt32(app.Configuration["LimitAddMillSeconds"]);
+EntityExtensions.LimitListMillSeconds = Convert.ToInt32(app.Configuration["LimitListMillSeconds"]);
 
 await app.RunAsync();
