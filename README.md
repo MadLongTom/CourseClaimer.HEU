@@ -51,19 +51,20 @@ scrape_configs:
 
 In <code>appsettings.json</code>, edit your hostadresss, login port and database provider.
 
-```json
-{
-  "BasePath": "https://jwxk.hrbeu.edu.cn/",
-  "AuthPath": "https://jwxk.hrbeu.edu.cn/xsxk/auth/login",
-  "DBProvider": "SQLite",
-  "DBProvider_CAP": "InMemory",
-  "ReLoginDelayMilliseconds": 300000,
-  "CapTakeNum": 5,
-  "QuartzDelayMilliseconds": 300000,
-  "CronSchedule": "0 18/20 * * * ? ",
-  "UseQuartz": false,
-}
-```
+| Parameter                | Description                                                                                             |
+|--------------------------|---------------------------------------------------------------------------------------------------------|
+| BasePath                 | string: Host Address of the wisedu website                                                              |
+| AuthPath                 | string: Login API path                                                                                  |
+| DBProvider               | string: Provider of ClaimDbContext, SQLite/SQLServer/PosegreSQL are supported                           |
+| DBProvider_CAP           | string: Provider of MessageBus Persistence,SQLite/InMemory/PostgreSQL are supported                     |
+| ReLoginDelayMilliseconds | int: How many milliseconds does it take for an account to perform a re login after logging in elsewhere |
+| CapTakeNum               | int: How many available accounts will simultaneously claim one course                                   |
+| QuartzDelayMilliseconds  | int: Duration of scheduled tasks in non Legacy Mode                                                     |
+| CronSchedule             | string: Time expression for Quartz tasks                                                                |
+| UseQuartz                | bool: Use scheduled tasks                                                                               |
+| LegacyMode               | bool: Use Add or MQ based List?                                                                         |
+| PGSQL                    | string: connectionstring of ClaimDbContext                                                              |
+| PGSQL_CAP                | string: connectionstring of MessageBus                                                                  |
 
 And configure the AesKey
 
